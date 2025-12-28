@@ -1,0 +1,10 @@
+{
+  "plugins": [
+    {
+      "name": "lsp-skills",
+      "source": "./",
+      "strict": false,
+      "skills": ["./"]
+    }
+  ]
+}
