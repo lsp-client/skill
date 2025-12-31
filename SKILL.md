@@ -1,80 +1,59 @@
 ---
-name: lsp-analysis
-description: Analyze code using the LSP CLI and Language Server Agent Protocol (LSAP). Use this skill to find definitions, references, symbols, and code structure.
+name: lsp-code-analysis
+description: High-fidelity code analysis using Language Server Protocol. Use this skill when you need to:(1) Navigate to function/class definitions, (2) Understand file structure via outline, (3) Find all usages of a symbol across the codebase, (4) Search for classes/functions by name globally, (5) Get documentation and type signatures. Ideal for code exploration, impact analysis, refactoring preparation, and understanding unfamiliar codebases.
 ---
 
-# LSP Analysis
+# LSP Code Analysis
 
-This skill provides tools to analyze codebases using the `lsp-cli`, which leverages the **Language Server Agent Protocol (LSAP)** for high-fidelity, agent-friendly code intelligence.
+Leverage language server intelligence for precise code navigation and understanding. This skill uses the **Language Server Agent Protocol (LSAP)**, designed for agent-friendly code analysis with progressive disclosure and robust symbol locating.
 
-## When to Use
-
-Use this skill when you need to:
-1.  **Understand Code**: Find where a function or class is defined (`definition`).
-2.  **Explore Structure**: Get a high-level map of a file (`outline`).
-3.  **Find Usage**: See everywhere a symbol is used (`reference`).
-4.  **Search Global Symbols**: Find classes/functions by name across the project (`symbol`).
-5.  **Get Details**: Read documentation and signatures (`hover`).
-
-## Core Concepts
-
-LSAP is designed for agents. It prioritizes **Progressive Disclosure** and **Robust Locating**.
-For a deeper understanding of the protocol, see [references/lsap.md](references/lsap.md).
+For protocol details, see [references/lsap.md](references/lsap.md).
 
 ## Prerequisites
-
-This skill requires the [lsp-cli](https://github.com/lsp-client/lsp-cli) tool to be installed in the environment where the agent runs.
 
 ```bash
 uv tool install lsp-cli
 ```
 
-## CLI Usage
+## Commands
 
-The `lsp` command is your primary interface. It automatically manages language servers in the background.
+### Outline: Understand File Structure
 
-### 1. File Outline (Start Here)
-
-Get a structural map of a file to understand its classes and methods.
+Start here when exploring a new file. Get a structural map of classes, methods, and functions.
 
 ```bash
 lsp outline <file_path>
 ```
 
-### 2. Find Definition
+### Definition: Navigate to Source
 
-Go to the definition of a symbol. **Crucially**, use `--find` to anchor your request to a text snippet.
+Jump to where a symbol is defined. Use `--find` to anchor to text (handles line number drift).
 
 ```bash
-# Syntax: lsp definition <file> --line <approx_line> --find "<unique_snippet>"
 lsp definition src/main.py --line 10 --find "process_data"
 ```
 
-*   `--line`: Approximate line number (helps disambiguate).
-*   `--find`: The text of the symbol you are interested in.
-*   `--code`: (Default: True) Includes the source code of the definition.
+### Reference: Find All Usages
 
-### 3. Find References
-
-Find all usages of a symbol in the workspace.
+Discover everywhere a symbol is used. Essential for impact analysis before changes.
 
 ```bash
 lsp reference src/main.py --line 10 --find "User"
 ```
 
-*   `--mode`: `references` (default) or `implementations`.
+Options: `--mode implementations` for interface implementations.
 
-### 4. Workspace Symbol Search
+### Symbol: Global Search
 
-Search for a symbol by name across the entire project (fuzzy search).
+Find classes/functions by name across the entire project (fuzzy search).
 
 ```bash
 lsp symbol "SymbolName" <project_root>
 ```
 
-### 5. Hover & Documentation
+### Hover: Get Documentation
 
-Get documentation strings and type signatures.
+Retrieve docstrings and type signatures without leaving context.
 
 ```bash
 lsp hover src/main.py --line 10 --find "my_function"
@@ -82,19 +61,14 @@ lsp hover src/main.py --line 10 --find "my_function"
 
 ## Best Practices
 
-Select the appropriate guide for your current needs:
+Best practices are organized in `references/` with a hierarchical naming convention:
 
-- **Strategic Exploration**: [references/bp_exploration_strategy.md](references/bp_exploration_strategy.md)
-  *   Use when entering a new codebase or file. Covers "Map then Territory" and the "Broad to Narrow" discovery funnel.
+```
+references/
+├── bp.md                          # Index: category definitions and guide selection
+├── bp_<category>.md               # Category guides (e.g., bp_explore.md, bp_modify.md)
+├── bp_<category>_<scenario>.md    # Specific scenarios (e.g., bp_modify_refactor.md)
+└── bp_<lang>_<domain>.md          # Language/domain specific (e.g., bp_python_django.md)
+```
 
-- **Robust Locating**: [references/bp_robust_locating.md](references/bp_robust_locating.md)
-  *   **CRITICAL**: Read this if your LSP requests are failing or missing targets. Explains how to use text anchors (`--find`) to handle shifting line numbers.
-
-- **Efficient Inspection**: [references/bp_efficient_inspection.md](references/bp_efficient_inspection.md)
-  *   Tips for maximizing information per query (context lines) and understanding server lifecycle management.
-
-- **Example Workflow**: [references/bp_scenario_refactoring.md](references/bp_scenario_refactoring.md)
-  *   A concrete walkthrough of investigating and refactoring a function using multiple LSP commands.
-
-
-
+**To find the right guide**: Read [references/bp.md](references/bp.md) first. It contains a decision tree to route you to the appropriate guide based on your current task, language, and domain.

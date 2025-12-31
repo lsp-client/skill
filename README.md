@@ -41,11 +41,29 @@ When an agent invokes this skill:
 
 ## 📚 Documentation
 
-Detailed guides on how this skill's capabilities are implemented and best practices for agents:
-
-- **[Exploration Strategy](references/bp_exploration_strategy.md)**: Best practices for mapping a new codebase.
-- **[Robust Locating](references/bp_robust_locating.md)**: Understanding how the skill locates code without line numbers.
+- **[Best Practices Index](references/bp.md)**: Decision tree to find the right guide for your task.
 - **[LSAP Protocol](references/lsap.md)**: The underlying protocol design.
+
+## 🔌 Extensible Best Practices
+
+This skill uses a modular best practices system that can be extended for specific languages, frameworks, or workflows.
+
+```
+references/
+├── bp.md                          # Index with decision tree
+├── bp_<category>.md               # Category guides (explore, modify, troubleshoot)
+├── bp_<category>_<scenario>.md    # Specific scenarios
+└── bp_<lang>_<domain>.md          # Language/domain specific
+```
+
+**Add your own**:
+
+```bash
+just new-bp python django          # -> bp_python_django.md
+just new-bp modify api-migration   # -> bp_modify_api-migration.md
+```
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
 ## 📦 Components
 
