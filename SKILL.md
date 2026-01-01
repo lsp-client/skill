@@ -61,14 +61,9 @@ lsp hover src/main.py --line 10 --find "my_function"
 
 ## Best Practices
 
-Best practices are organized in `references/` with a hierarchical naming convention:
+### General
 
-```
-references/
-├── bp.md                          # Index: category definitions and guide selection
-├── bp_<category>.md               # Category guides (e.g., bp_explore.md, bp_modify.md)
-├── bp_<category>_<scenario>.md    # Specific scenarios (e.g., bp_modify_refactor.md)
-└── bp_<lang>_<domain>.md          # Language/domain specific (e.g., bp_python_django.md)
-```
+### Scenario
 
-**To find the right guide**: Read [references/bp.md](references/bp.md) first. It contains a decision tree to route you to the appropriate guide based on your current task, language, and domain.
+- Frontend: [bp_frontend.md](references/bp_frontend.md)
+- Backend: [bp_backend.md](references/bp_backend.md)
