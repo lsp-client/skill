@@ -5,7 +5,7 @@ description: High-fidelity code analysis using Language Server Protocol. Use thi
 
 # LSP Code Analysis
 
-Leverage language server intelligence for precise code navigation and understanding. This skill uses the **Language Server Agent Protocol (LSAP)**, designed for agent-friendly code analysis with progressive disclosure and robust symbol locating.
+Leverage language server intelligence for precise code navigation and understanding. This skill uses the Language Server Agent Protocol (LSAP), designed for agent-friendly code analysis with progressive disclosure and robust symbol locating.
 
 For protocol details, see [references/lsap.md](references/lsap.md).
 
@@ -64,6 +64,8 @@ lsp hover src/main.py --line 10 --find "my_function"
 ### General
 
 ### Scenario
+
+Refer to each scenario's index file for detailed best practices.
 
 - Frontend: [bp_frontend.md](references/bp_frontend.md)
 - Backend: [bp_backend.md](references/bp_backend.md)
