@@ -17,9 +17,19 @@ uv tool install lsp-cli
 
 ## Commands
 
+All commands support `-h` or `--help` for detailed argument documentation.
+
+### The `--scope` Parameter
+
+Most analysis commands use `--scope` (or `-s`) to narrow down the search area within a file. It is highly flexible:
+
+- **Line Number**: `--scope 42` (Search at or near line 42)
+- **Line Range**: `--scope 10,50` (Search between line 10 and 50)
+- **Symbol Path**: `--scope User.profile.update` (Search within a specific class or function hierarchy)
+
 ### Outline: Understand File Structure
 
-Start here when exploring a new file. Get a structural map of classes, methods, and functions.
+**Guidance:** ALWAYS use this before reading a file. It provides a structural map that helps you identify relevant sections. **Prefer `outline` over full file `read`** for non-essential code to save tokens and maintain high-level focus.
 
 ```bash
 lsp outline <file_path>
@@ -27,43 +37,56 @@ lsp outline <file_path>
 
 ### Definition: Navigate to Source
 
-Jump to where a symbol is defined. Use `--find` to anchor to text (handles line number drift).
+**Guidance:** Use to quickly jump to dependencies or implementation details. When tracking complex logic, use `definition` to verify function signatures and return types without reading the entire callee file.
 
 ```bash
-lsp definition src/main.py --line 10 --find "process_data"
+# Locate by symbol path
+lsp definition src/models.py --scope User.get_id
+# Locate by line and text anchor
+lsp definition src/main.py --scope 10 --find "process_data"
 ```
 
 ### Reference: Find All Usages
 
-Discover everywhere a symbol is used. Essential for impact analysis before changes.
+**Guidance:** Mandatory before refactoring or deleting code. Use the `implementations` mode to find concrete logic in interface-heavy or abstract codebases.
 
 ```bash
-lsp reference src/main.py --line 10 --find "User"
+# Find references within a specific function
+lsp reference src/main.py --scope MyClass.run --find "logger"
+# Find concrete implementations of an interface
+lsp reference src/api.py --find "IDataProvider" --mode implementations
 ```
 
-Options: `--mode implementations` for interface implementations.
+### Search: Global Symbol Search
 
-### Symbol: Global Search
-
-Find classes/functions by name across the entire project (fuzzy search).
+**Guidance:** Use for "lost in codebase" scenarios. Combine with `--kind` to filter out noise (e.g., finding a `class` when many functions have similar names).
 
 ```bash
-lsp symbol "SymbolName" <project_root>
+# Fuzzy search for symbols
+lsp search "MyClassName" <project_root>
+# Filter by kind (class, function, method, etc.)
+lsp search "init" . --kind function --kind method
+```
+
+### Symbol: Local Symbol Info
+
+**Guidance:** Use to resolve ambiguity in dense code. It provides precise location data that can be used to anchor subsequent `hover` or `definition` calls.
+
+```bash
+lsp symbol src/main.py --find "my_variable"
 ```
 
 ### Hover: Get Documentation
 
-Retrieve docstrings and type signatures without leaving context.
+**Guidance:** **Prefer `hover` over `read`** to understand how to call a function or use a class. It returns docstrings and type signatures, giving you the "API contract" without the "implementation noise."
 
 ```bash
-lsp hover src/main.py --line 10 --find "my_function"
+lsp hover src/main.py --find "my_function"
 ```
 
 ## Best Practices
 
-### General
-
-### Scenario
+Leverage these structural exploration workflows to quickly complete project analysis in specific scenarios. These guides help you navigate codebases efficiently without reading every line.
 
 Refer to each scenario's index file for detailed best practices.
 
