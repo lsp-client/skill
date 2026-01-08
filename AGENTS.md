@@ -3,13 +3,16 @@
 ## Project Structure
 
 ```
-├── SKILL.md              # Skill definition (for agents using this skill)
-├── CONTRIBUTING.md       # Contribution guide (for developers)
-├── references/
-│   ├── bp_*.md           # Domain indices and best practice guides
-│   ├── bp_template.md    # Template for new best practices
-│   └── lsap.md           # Protocol reference
-└── justfile              # Developer commands
+├── skills/
+│   └── lsp-code-analysis/    # Main skill directory
+│       ├── SKILL.md          # Skill definition
+│       ├── references/       # Best practice guides (bp_*.md)
+│       └── assets/           # Templates and assets
+├── lib-references/           # External library/protocol references
+│   ├── LSAP/                 # LSAP protocol source
+│   └── lsp-cli/              # lsp-cli source
+├── CONTRIBUTING.md           # Development guide
+└── justfile                  # Development commands
 ```
 
 ## Common Tasks
@@ -17,7 +20,7 @@
 ### Adding a New Best Practice
 
 1. Run `just new-bp <category> [scenario]` to create from template
-2. Edit the generated file in `references/`
+2. Edit the generated file in `skills/lsp-code-analysis/references/`
 3. Add entry to the appropriate index in `SKILL.md` or domain `bp_*.md` file
 4. Verify naming follows convention in `CONTRIBUTING.md`
 
@@ -38,5 +41,5 @@ Before completing a contribution:
 
 - [ ] CLI commands in examples are valid (`lsp <cmd> --help` to verify)
 - [ ] New `bp_*.md` files follow `bp_template.md` structure
-- [ ] `references/bp.md` updated if adding new best practice (Note: Index is now in `SKILL.md`)
 - [ ] No developer-facing content in agent-facing files
+

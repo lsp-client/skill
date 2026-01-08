@@ -8,22 +8,29 @@
 new-bp category scenario="":
     #!/usr/bin/env bash
     set -euo pipefail
-    
+
     if [ -z "{{scenario}}" ]; then
         filename="bp_{{category}}.md"
     else
         filename="bp_{{category}}_{{scenario}}.md"
     fi
-    
-    target="references/$filename"
-    
+
+    target="skills/lsp-code-analysis/references/$filename"
+    template="skills/lsp-code-analysis/assets/bp_template.md"
+
     if [ -f "$target" ]; then
         echo "Error: $target already exists"
         exit 1
     fi
-    
-    cp references/bp_template.md "$target"
+
+    if [ ! -f "$template" ]; then
+        echo "Error: Template not found at $template"
+        exit 1
+    fi
+
+    mkdir -p "skills/lsp-code-analysis/references"
+    cp "$template" "$target"
     echo "Created $target"
     echo "Next steps:"
     echo "  1. Edit $target"
-    echo "  2. Add entry to references/bp.md"
+    echo "  2. Add entry to skills/lsp-code-analysis/SKILL.md or domain indices"

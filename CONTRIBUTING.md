@@ -8,11 +8,10 @@
 
 ## Best Practices Structure
 
-Best practices are organized in `references/` with hierarchical naming:
+Best practices are organized in `skills/lsp-code-analysis/references/` with hierarchical naming:
 
 ```
-references/
-├── bp.md                          # Index with decision tree (agent reads this first)
+skills/lsp-code-analysis/references/
 ├── bp_<category>.md               # Category guides (explore, modify, troubleshoot)
 ├── bp_<category>_<scenario>.md    # Specific scenarios
 └── bp_<lang>_<domain>.md          # Language/domain specific
@@ -38,7 +37,7 @@ just new-bp modify api-migration     # -> bp_modify_api-migration.md
 just new-bp python django            # -> bp_python_django.md
 ```
 
-Then add an entry to the appropriate table in `references/bp.md`.
+Then add an entry to the appropriate table in `skills/lsp-code-analysis/SKILL.md` or domain indices.
 
 ### Current Categories
 
@@ -50,7 +49,7 @@ Then add an entry to the appropriate table in `references/bp.md`.
 
 For complex capabilities (e.g., `call-hierarchy`):
 
-1. Create `references/<capability>.md`
+1. Create `skills/lsp-code-analysis/references/<capability>.md`
 2. Link from `SKILL.md` if it's a core feature
 
 ## Testing Changes
