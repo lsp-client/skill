@@ -1,111 +1,17 @@
 #!/bin/bash
-set -e
 
-REPO="lsp-client/lsp-skill"
-TOOL=${1:-claude}
-DEST_BASE=$2
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "⚠  DEPRECATED: This installer is deprecated."
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+echo "Please use the new installation method:"
+echo ""
+echo "If you are an AI agent:"
+echo "  bash <(curl -sSL https://raw.githubusercontent.com/lsp-client/lsp-skill/main/scripts/install.sh) <absolute_path_to_skill_directory>"
+echo ""
+echo "If you are a human user, please refer to:"
+echo "  https://github.com/lsp-client/lsp-skill#installation"
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
-# Check if tool is supported
-case "$TOOL" in
-    claude|gemini|codex|opencode)
-        ;;
-    *)
-        echo "Tool '$TOOL' is not supported. Skipping $SKILL_NAME update."
-        exit 0
-        ;;
-esac
-
-if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
-    echo "LSP Skill Installer"
-    echo ""
-    echo "Usage: $0 [tool_name] [install_path]"
-    echo ""
-    echo "Arguments:"
-    echo "  tool_name     The AI tool to install for (default: claude)"
-    echo "                Supported: claude, gemini, codex, opencode"
-    echo "  install_path  Custom path to install skills"
-    echo "                Default for opencode: ~/.config/opencode/skill"
-    echo "                Default for others:   ~/.[tool_name]/skills"
-    echo ""
-    exit 0
-fi
-
-# Determine installation path
-if [ -z "$DEST_BASE" ]; then
-    if [ "$TOOL" = "opencode" ]; then
-        DEST_BASE="$HOME/.config/opencode/skill"
-    else
-        DEST_BASE="$HOME/.$TOOL/skills"
-    fi
-fi
-
-SKILL_NAME="lsp-code-analysis"
-TARGET_DIR="$DEST_BASE/$SKILL_NAME"
-
-# Fetch latest release info
-echo "Checking for updates for $SKILL_NAME..."
-RELEASE_DATA=$(curl -sSL "https://api.github.com/repos/$REPO/releases/latest")
-LATEST_VERSION=$(echo "$RELEASE_DATA" | grep '"tag_name":' | head -n 1 | sed -E 's/.*"tag_name": "([^"]+)".*/\1/')
-
-if [ -z "$LATEST_VERSION" ]; then
-    echo "Warning: Could not determine latest version. Proceeding with installation..."
-else
-    if [ -f "$TARGET_DIR/.version" ]; then
-        CURRENT_VERSION=$(cat "$TARGET_DIR/.version")
-        if [ "$LATEST_VERSION" = "$CURRENT_VERSION" ]; then
-            echo "$SKILL_NAME is already at the latest version ($LATEST_VERSION). Skipping update."
-            exit 0
-        fi
-    fi
-    echo "Updating $SKILL_NAME from $CURRENT_VERSION to $LATEST_VERSION..."
-fi
-
-echo "Installing $SKILL_NAME for $TOOL into $TARGET_DIR..."
-
-# Create target directory if it doesn't exist
-mkdir -p "$DEST_BASE"
-
-# Download and extract
-DOWNLOAD_URL="https://github.com/$REPO/releases/latest/download/lsp-code-analysis.zip"
-
-TMP_ZIP=$(mktemp)
-echo "Downloading $DOWNLOAD_URL..."
-if ! curl -sSL -f -o "$TMP_ZIP" "$DOWNLOAD_URL"; then
-    echo "Error: Failed to download from $DOWNLOAD_URL. Falling back to API download URL..."
-    DOWNLOAD_URL=$(echo "$RELEASE_DATA" | grep "browser_download_url" | grep ".zip" | head -n 1 | cut -d '"' -f 4)
-    if [ -z "$DOWNLOAD_URL" ]; then
-        DOWNLOAD_URL=$(echo "$RELEASE_DATA" | grep "zipball_url" | head -n 1 | cut -d '"' -f 4)
-    fi
-    if [ -z "$DOWNLOAD_URL" ]; then
-        echo "Error: Could not find download URL for latest release."
-        exit 1
-    fi
-    curl -sSL -o "$TMP_ZIP" "$DOWNLOAD_URL"
-fi
-
-echo "Extracting to $TARGET_DIR..."
-# Remove old version if it exists
-rm -rf "$TARGET_DIR"
-mkdir -p "$TARGET_DIR"
-
-unzip -q "$TMP_ZIP" -d "$TARGET_DIR.tmp"
-
-# Robust extraction: find where SKILL.md is and move that directory's content
-SKILL_PATH=$(find "$TARGET_DIR.tmp" -name "SKILL.md" | head -n 1)
-if [ -n "$SKILL_PATH" ]; then
-    SKILL_DIR=$(dirname "$SKILL_PATH")
-    mv "$SKILL_DIR"/* "$TARGET_DIR/"
-else
-    # Fallback: move all contents
-    mv "$TARGET_DIR.tmp/"* "$TARGET_DIR/" 2>/dev/null || true
-fi
-
-# Save version information
-if [ -n "$LATEST_VERSION" ]; then
-    echo "$LATEST_VERSION" > "$TARGET_DIR/.version"
-fi
-
-rm -rf "$TARGET_DIR.tmp"
-rm "$TMP_ZIP"
-
-echo "Successfully installed/updated $SKILL_NAME to $LATEST_VERSION."
+exit 1
