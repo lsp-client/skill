@@ -1,20 +1,5 @@
 # AGENTS.md
 
-## Project Structure
-
-```
-├── skills/
-│   └── lsp-code-analysis/    # Main skill directory
-│       ├── SKILL.md          # Skill definition
-│       ├── references/       # Best practice guides (bp_*.md)
-│       └── assets/           # Templates and assets
-├── lib-references/           # External library/protocol references
-│   ├── LSAP/                 # LSAP protocol source
-│   └── lsp-cli/              # lsp-cli source
-├── CONTRIBUTING.md           # Development guide
-└── justfile                  # Development commands
-```
-
 ## Common Tasks
 
 ### Adding a New Best Practice
@@ -26,8 +11,11 @@
 
 ### Modifying SKILL.md
 
-- Keep content minimal; move details to `references/`
-- `description` in frontmatter must contain all trigger conditions
+- **Adhere to RFC 2119**: Use standardized requirement levels (`MUST`, `SHOULD`, `RECOMMENDED`, etc.) to define operational boundaries for agents.
+- **Verify via CLI**: ALWAYS run `lsp <cmd> --help` to verify command syntax, options, and aliases before updating. Never assume features exist without verification.
+- **Actionable Workflows**: Present workflows as sequential code blocks with clear step-by-step comments. Avoid verbose prose descriptions.
+- **Keep it Minimal**: Move implementation details to `references/`. `SKILL.md` serves as the high-level semantic interface.
+- **Frontmatter**: The `description` in frontmatter MUST contain all relevant trigger conditions for the skill.
 
 ### Modifying bp\_\*.md
 
@@ -42,4 +30,3 @@ Before completing a contribution:
 - [ ] CLI commands in examples are valid (`lsp <cmd> --help` to verify)
 - [ ] New `bp_*.md` files follow `bp_template.md` structure
 - [ ] No developer-facing content in agent-facing files
-
