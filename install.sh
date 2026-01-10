@@ -62,26 +62,19 @@ echo "Extracting to $TARGET_DIR..."
 rm -rf "$TARGET_DIR"
 mkdir -p "$TARGET_DIR"
 
-# Extracting. If it's a source zipball, it might have a nested directory.
 unzip -q "$TMP_ZIP" -d "$TARGET_DIR.tmp"
-# Move content up if it's nested (GitHub zipball behavior)
-# Check for any directory inside the tmp dir
-INNER_DIR=$(find "$TARGET_DIR.tmp" -mindepth 1 -maxdepth 1 -type d | head -n 1)
-if [ -n "$INNER_DIR" ] && [ "$(ls -A "$INNER_DIR" | grep -v "^skills$" | wc -l)" -eq 0 ] && [ -d "$INNER_DIR/skills/lsp-code-analysis" ]; then
-    # Case: zip contains skills/lsp-code-analysis/... (local test or specific structure)
-    mv "$INNER_DIR/skills/lsp-code-analysis/"* "$TARGET_DIR/"
-elif [ -n "$INNER_DIR" ] && [ -d "$INNER_DIR/lsp-code-analysis" ]; then
-    # Case: zip contains lsp-code-analysis/...
-    mv "$INNER_DIR/lsp-code-analysis/"* "$TARGET_DIR/"
-elif [ -d "$TARGET_DIR.tmp/skills/lsp-code-analysis" ]; then
-    # Case: zip extracted skills/lsp-code-analysis directly
-    mv "$TARGET_DIR.tmp/skills/lsp-code-analysis/"* "$TARGET_DIR/"
+
+# Robust extraction: find where SKILL.md is and move that directory's content
+SKILL_PATH=$(find "$TARGET_DIR.tmp" -name "SKILL.md" | head -n 1)
+if [ -n "$SKILL_PATH" ]; then
+    SKILL_DIR=$(dirname "$SKILL_PATH")
+    mv "$SKILL_DIR"/* "$TARGET_DIR/"
 else
-    # Fallback: move all contents if no specific structure is found
+    # Fallback: move all contents
     mv "$TARGET_DIR.tmp/"* "$TARGET_DIR/" 2>/dev/null || true
 fi
-rm -rf "$TARGET_DIR.tmp"
 
+rm -rf "$TARGET_DIR.tmp"
 rm "$TMP_ZIP"
 
 echo "Successfully installed/updated $SKILL_NAME."
