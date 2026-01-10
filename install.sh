@@ -37,6 +37,7 @@ echo "Installing $SKILL_NAME for $TOOL into $TARGET_DIR..."
 # Create target directory if it doesn't exist
 mkdir -p "$DEST_BASE"
 
+# Download and extract
 # Fetch latest release info from GitHub API
 echo "Fetching latest release from $REPO..."
 RELEASE_DATA=$(curl -s "https://api.github.com/repos/$REPO/releases/latest")
@@ -52,7 +53,6 @@ if [ -z "$DOWNLOAD_URL" ]; then
     exit 1
 fi
 
-# Download and extract
 TMP_ZIP=$(mktemp)
 echo "Downloading $DOWNLOAD_URL..."
 curl -L -o "$TMP_ZIP" "$DOWNLOAD_URL"
@@ -65,14 +65,22 @@ mkdir -p "$TARGET_DIR"
 # Extracting. If it's a source zipball, it might have a nested directory.
 unzip -q "$TMP_ZIP" -d "$TARGET_DIR.tmp"
 # Move content up if it's nested (GitHub zipball behavior)
-INNER_DIR=$(ls -d "$TARGET_DIR.tmp"/*/)
-if [ -n "$INNER_DIR" ]; then
-    mv "$INNER_DIR"* "$TARGET_DIR/"
-    rm -rf "$TARGET_DIR.tmp"
+# Check for any directory inside the tmp dir
+INNER_DIR=$(find "$TARGET_DIR.tmp" -mindepth 1 -maxdepth 1 -type d | head -n 1)
+if [ -n "$INNER_DIR" ] && [ "$(ls -A "$INNER_DIR" | grep -v "^skills$" | wc -l)" -eq 0 ] && [ -d "$INNER_DIR/skills/lsp-code-analysis" ]; then
+    # Case: zip contains skills/lsp-code-analysis/... (local test or specific structure)
+    mv "$INNER_DIR/skills/lsp-code-analysis/"* "$TARGET_DIR/"
+elif [ -n "$INNER_DIR" ] && [ -d "$INNER_DIR/lsp-code-analysis" ]; then
+    # Case: zip contains lsp-code-analysis/...
+    mv "$INNER_DIR/lsp-code-analysis/"* "$TARGET_DIR/"
+elif [ -d "$TARGET_DIR.tmp/skills/lsp-code-analysis" ]; then
+    # Case: zip extracted skills/lsp-code-analysis directly
+    mv "$TARGET_DIR.tmp/skills/lsp-code-analysis/"* "$TARGET_DIR/"
 else
-    mv "$TARGET_DIR.tmp"/* "$TARGET_DIR/"
-    rm -rf "$TARGET_DIR.tmp"
+    # Fallback: move all contents if no specific structure is found
+    mv "$TARGET_DIR.tmp/"* "$TARGET_DIR/" 2>/dev/null || true
 fi
+rm -rf "$TARGET_DIR.tmp"
 
 rm "$TMP_ZIP"
 
