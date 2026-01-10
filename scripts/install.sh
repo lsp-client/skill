@@ -4,6 +4,15 @@ set -e
 REPO="lsp-client/lsp-skill"
 SKILL_NAME="lsp-code-analysis"
 
+# Cleanup function for temporary files
+cleanup() {
+    rm -f "$TMP_ZIP" 2>/dev/null || true
+    rm -rf "$TMP_DIR" 2>/dev/null || true
+}
+
+# Set trap to ensure cleanup on exit, interrupt, or termination
+trap cleanup EXIT INT TERM
+
 # Show help
 if [ "$1" = "--help" ] || [ "$1" = "-h" ] || [ -z "$1" ]; then
     echo "LSP Skill Installer"
@@ -38,14 +47,14 @@ if [ ! -f "$SKILL_DIR/SKILL.md" ]; then
 fi
 
 # Validate skill name is lsp-code-analysis
-SKILL_NAME_FROM_FILE=$(grep -A1 "^name:" "$SKILL_DIR/SKILL.md" | grep "name:" | sed 's/^name: *//' || true)
+SKILL_NAME_FROM_FILE=$(grep "^name:" "$SKILL_DIR/SKILL.md" | sed 's/^name: *//' || true)
 if [ "$SKILL_NAME_FROM_FILE" != "$SKILL_NAME" ]; then
     echo "Error: Skill name in SKILL.md is '$SKILL_NAME_FROM_FILE', expected '$SKILL_NAME'."
     exit 1
 fi
 
 # Get current version from SKILL.md
-CURRENT_VERSION=$(grep -A1 "^version:" "$SKILL_DIR/SKILL.md" | grep "version:" | sed 's/^version: *//' || echo "unknown")
+CURRENT_VERSION=$(grep "^version:" "$SKILL_DIR/SKILL.md" | sed 's/^version: *//' || echo "unknown")
 
 echo "Checking for updates for $SKILL_NAME..."
 
@@ -61,7 +70,8 @@ else
     echo "Current version: $CURRENT_VERSION"
     echo "Latest version: $LATEST_VERSION"
     
-    if [ "$LATEST_VERSION" = "$CURRENT_VERSION" ]; then
+    # Strip leading 'v' from versions for comparison
+    if [ "${LATEST_VERSION#v}" = "${CURRENT_VERSION#v}" ]; then
         echo "✓ $SKILL_NAME is already at the latest version."
     else
         echo "Updating $SKILL_NAME to $LATEST_VERSION..."
@@ -90,6 +100,24 @@ else
             curl -sSL -o "$TMP_ZIP" "$DOWNLOAD_URL"
         fi
         
+        # Optional checksum verification for security-conscious users.
+        # If LSP_SKILL_ZIP_SHA256 is set, verify the downloaded archive.
+        if [ -n "$LSP_SKILL_ZIP_SHA256" ]; then
+            if command -v sha256sum >/dev/null 2>&1; then
+                echo "Verifying checksum for downloaded archive..."
+                ACTUAL_SHA256=$(sha256sum "$TMP_ZIP" | awk '{print $1}')
+                if [ "$ACTUAL_SHA256" != "$LSP_SKILL_ZIP_SHA256" ]; then
+                    echo "Error: Checksum verification failed for downloaded archive."
+                    echo "Expected: $LSP_SKILL_ZIP_SHA256"
+                    echo "Actual:   $ACTUAL_SHA256"
+                    exit 1
+                fi
+                echo "✓ Checksum verified successfully."
+            else
+                echo "Warning: sha256sum not found; skipping checksum verification."
+            fi
+        fi
+        
         echo "Extracting to $SKILL_DIR..."
         
         # Create temporary extraction directory
@@ -102,14 +130,15 @@ else
         if [ -n "$SKILL_PATH" ]; then
             EXTRACTED_SKILL_DIR=$(dirname "$SKILL_PATH")
             # Remove old content (except hidden files like .version)
-            find "$SKILL_DIR" -mindepth 1 -not -name '.*' -exec rm -rf {} + 2>/dev/null || true
-            # Copy new content
-            cp -r "$EXTRACTED_SKILL_DIR"/* "$SKILL_DIR/"
+            if ! find "$SKILL_DIR" -mindepth 1 -not -name '.*' -exec rm -rf {} + 2>/dev/null; then
+                echo "Error: Failed to clean existing skill directory '$SKILL_DIR'."
+                exit 1
+            fi
+            # Copy new content (including hidden files)
+            cp -r "$EXTRACTED_SKILL_DIR"/. "$SKILL_DIR/"
             echo "✓ Successfully updated $SKILL_NAME to $LATEST_VERSION."
         else
             echo "Error: Could not find SKILL.md in the downloaded archive."
-            rm -rf "$TMP_DIR"
-            rm -f "$TMP_ZIP"
             exit 1
         fi
         
