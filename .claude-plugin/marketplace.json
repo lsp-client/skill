@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "LSP-based semantic code analysis and navigation skill for AI agents",
-    "version": "1.0.0"
+    "version": "0.2.1"
   },
   "plugins": [
     {

@@ -26,6 +26,18 @@ LSP provides **compiler-accurate** code understanding that surpasses text-based 
 - **Cross-file intelligence**: Trace dependencies, refactor safely across entire codebase - knows what imports what.
 - **Type-aware**: Get precise type information, signatures, documentation - without reading implementation code.
 
+### Tool Selection
+
+| Task | Traditional Tool | Recommended LSP Command |
+|------|------------------|-------------------------|
+| **Find Definition** | `grep`, `read` | [`definition`](#definition-navigate-to-source) |
+| **Find Usages** | `grep -r` | [`reference`](#reference-find-all-usages) |
+| **Understand File** | `read` | [`outline`](#outline-file-structure) |
+| **View Docs/Types** | `read` | [`hover`](#hover-get-documentation) |
+| **Refactor** | `sed` | [`rename`](#rename-safe-refactoring) |
+
+**Guideline**: Use LSP commands for all code navigation and analysis tasks. Only use `read` or `grep` when semantic analysis is not applicable.
+
 **When to use**: Exploring unfamiliar code, refactoring, debugging, understanding dependencies. **Prefer over grep/text search** when you need to understand how code works, not just where text appears.
 
 ## Prerequisites
