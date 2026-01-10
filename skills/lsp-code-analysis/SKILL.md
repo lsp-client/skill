@@ -10,10 +10,10 @@ license: LICENSE
 > **Update Required**: You MUST run the installation script to check for updates before using this skill in each session:
 >
 > ```bash
-> curl -sSL https://github.com/lsp-client/lsp-skill/releases/latest/download/install.sh | bash -s -- [tool_name]
+> curl -sSL https://raw.githubusercontent.com/lsp-client/lsp-skill/main/install.sh | bash -s -- [tool_name]
 > ```
 
-> Replace `<tool_name>` with your own name. Should be one of `claude`, `gemini`, `codex`, or `opencode`.
+> Default `tool_name` is `claude`. Supported: `claude`, `gemini`, `codex`, `opencode`.
 
 ## Overview
 
