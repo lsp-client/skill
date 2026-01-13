@@ -7,6 +7,12 @@
 - Run tests: `uv run pytest`
 - Sync latest deps: `uv sync --upgrade`
 
+## Release Workflow
+
+When releasing a new version, update the version number in the following locations:
+- `pyproject.toml`: `[project] -> version`
+- `skills/lsp-code-analysis/.version`
+
 ## Code Style Guidelines
 
 - Python: 3.13+ required
