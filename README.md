@@ -27,7 +27,7 @@ Please follow these steps to install this skill:
    - Other tools:
      1. Search online to determine if your tool supports agent skills from `agentskills.io`.
      2. If supported, check your tool's documentation to get the skill directory.
-3. Once you have determined the correct path, download the latest release and unzip it into that directory.
+3. Download the latest release and unzip it into that directory.
 
    For example, if you are Claude Code:
 
@@ -35,10 +35,11 @@ Please follow these steps to install this skill:
    # Create directory if it doesn't exist
    mkdir -p ~/.claude/skills/lsp-code-analysis
 
-   # Download and unzip the latest release
-   curl -sSL https://github.com/lsp-client/lsp-skill/releases/latest/download/lsp-code-analysis.zip -o lsp-code-analysis.zip
-   unzip -o lsp-code-analysis.zip -d ~/.claude/skills/
-   rm lsp-code-analysis.zip
+    # Download and unzip the latest release
+    TMP_DIR=$(mktemp -d)
+    curl -sSL https://github.com/lsp-client/lsp-skill/releases/latest/download/lsp-code-analysis.zip -o "$TMP_DIR/lsp-code-analysis.zip"
+    unzip -o "$TMP_DIR/lsp-code-analysis.zip" -d ~/.claude/skills/
+    rm -rf "$TMP_DIR"
    ```
 ````
 
