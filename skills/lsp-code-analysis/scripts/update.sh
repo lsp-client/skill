@@ -19,6 +19,7 @@ VERSION_FILE="$SKILL_DIR/.version"
 # Validate SKILL.md exists
 [ -f "$SKILL_DIR/SKILL.md" ] || { echo "Error: SKILL.md not found in '$SKILL_DIR'."; exit 1; }
 
+<<<<<<< HEAD
 echo "Checking lsp-cli installation..."
 uv tool install --python 3.13 lsp-cli@latest
 LATEST_CLI_VERSION=$(uv tool list | grep "^lsp-cli " | awk '{print $2}' | sed 's/^v//')
@@ -31,6 +32,8 @@ fi
 
 echo "lsp-cli version mismatch ($CURRENT_CLI_VERSION -> $LATEST_CLI_VERSION). Proceeding with update..."
 
+=======
+>>>>>>> b73ff13 (WIP: update distribution)
 # Get current version from SKILL.md
 CURRENT_VERSION=$(grep "^version:" "$SKILL_DIR/SKILL.md" | sed 's/^version: *//' || echo "unknown")
 
