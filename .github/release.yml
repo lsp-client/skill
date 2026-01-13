@@ -1,0 +1,32 @@
+changelog:
+  exclude:
+    labels:
+      - skip-changelog
+    authors:
+      - octocat
+  categories:
+    - title: "🚀 Features"
+      labels:
+        - "feature"
+        - "feat"
+    - title: "🐛 Bug Fixes"
+      labels:
+        - "bug"
+        - "fix"
+    - title: "🧪 Testing"
+      labels:
+        - "test"
+    - title: "📝 Documentation"
+      labels:
+        - "documentation"
+        - "docs"
+    - title: "⚙️ Maintenance"
+      labels:
+        - "chore"
+        - "refactor"
+        - "style"
+        - "build"
+        - "ci"
+    - title: "🔧 Other Changes"
+      labels:
+        - "*"

@@ -135,9 +135,9 @@ The underlying [lsp-client](https://github.com/lsp-client/lsp-client) library co
 
 - **Full LSP 3.17 Specification Coverage**: As the LSP protocol evolves, new standard capabilities (Type Hierarchy, Call Hierarchy, Inline Values, etc.) will be continuously integrated
 
-### 2. Tool Capability Expansion - LSAP Protocol
+### 2. Tool Capability Expansion - LSP CLI & LSAP Protocol
 
-The [LSAP (Language Server Agent Protocol)](https://github.com/lsp-client/LSAP) continuously designs and releases new composed capabilities:
+The integrated **LSP CLI** implements the [LSAP (Language Server Agent Protocol)](https://github.com/lsp-client/LSAP) to provide high-level, agent-optimized capabilities:
 
 - **Advanced Analysis Capabilities**: Upcoming Relation API, Impact Analysis, Code Map, and more
 - **Optimized Output Formats**: Continuously improving Markdown rendering templates using the Progressive Disclosure principle, providing code context better suited for LLM reasoning
@@ -146,7 +146,7 @@ The [LSAP (Language Server Agent Protocol)](https://github.com/lsp-client/LSAP) 
 
 This skill adopts a modular [Best Practice system](https://github.com/lsp-client/lsp-skill/blob/main/skills/lsp-code-analysis/SKILL.md#best-practices), enabling community contributions of domain-specific workflows:
 
-- **Domain Expert Knowledge**: Specialized workflows for different domains including Frontend ([bp_frontend.md](https://github.com/lsp-client/lsp-skill/blob/main/skills/lsp-code-analysis/references/bp_frontend.md)), Backend ([bp_backend.md](https://github.com/lsp-client/lsp-skill/blob/main/skills/lsp-code-analysis/references/bp_backend.md)), and more
+- **Domain Expert Knowledge**: Specialized workflows for different domains including Frontend ([bp_frontend.md](skills/lsp-code-analysis/references/bp_frontend.md)), Backend ([bp_backend.md](skills/lsp-code-analysis/references/bp_backend.md)), and more
 - **Framework/Language Specialization**: Customized LSP usage guides can be added for specific tech stacks (e.g., Django, React, FastAPI)
 
 These three layers of extensibility work together: the **foundation** provides raw tool materials, **composed capabilities** design efficient tool combinations, and **best practices** apply these tools to concrete scenarios. As all three continue to evolve, this skill will become increasingly powerful and user-friendly.
@@ -155,7 +155,7 @@ These three layers of extensibility work together: the **foundation** provides r
 
 This repository is a self-contained Agent Skill that bundles:
 
+- **LSP CLI Engine**: Core engine for LSAP (in `src/` and `tests/`)
 - **Skill Definition**: [skills/lsp-code-analysis/SKILL.md](skills/lsp-code-analysis/SKILL.md)
 - **Best Practice Guides**: [skills/lsp-code-analysis/references/](skills/lsp-code-analysis/references/)
 - **Protocol Specs**: [LSAP Reference](lib-references/LSAP/)
-- **CLI Engine Docs**: [lsp-cli Reference](lib-references/lsp-cli/)

@@ -1,0 +1,10 @@
+# Build artifacts
+node_modules/
+target/
+*.pyc
+__pycache__/
+
+# Lock files that might be generated
+package-lock.json
+yarn.lock
+Cargo.lock

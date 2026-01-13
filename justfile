@@ -45,3 +45,33 @@ package skill="lsp-code-analysis":
     cd skills
     zip -r ../dist/{{skill}}.zip {{skill}}/
     echo "Done! Package created at dist/{{skill}}.zip"
+
+sync:
+    uv sync --upgrade
+
+lint path='src':
+    uv run ruff check --fix {{path}}
+    uv run ruff format {{path}}
+    uv run ty check {{path}}
+
+test:
+    uv run pytest
+
+check:
+    uv run ruff check
+    uv run ruff format --check
+    uv run ty check src
+
+# Release a new version (e.g., just release 0.1.0)
+release version:
+    @echo "Releasing v{{version}}..."
+    # Check if version matches pyproject.toml
+    @grep -q 'version = "{{version}}"' pyproject.toml || (echo "Version mismatch in pyproject.toml"; exit 1)
+    # Ensure working directory is clean
+    @git diff-index --quiet HEAD || (echo "Dirty working directory, please commit or stash changes"; exit 1)
+    # Run tests
+    uv run pytest
+    # Create and push tag
+    git tag v{{version}}
+    git push origin main
+    git push origin v{{version}}

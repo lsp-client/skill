@@ -1,0 +1,12 @@
+{
+  "name": "hello-typescript",
+  "version": "1.0.0",
+  "description": "Test TypeScript project",
+  "main": "index.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "typescript": "5.7.2"
+  }
+}

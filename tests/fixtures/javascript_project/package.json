@@ -1,0 +1,7 @@
+{
+  "name": "hello-javascript",
+  "version": "1.0.0",
+  "description": "Test JavaScript project",
+  "main": "index.js",
+  "type": "module"
+}

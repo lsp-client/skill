@@ -6,6 +6,52 @@
 - **LSAP Alignment**: Follow Language Server Agent Protocol principles (progressive disclosure, high-density context).
 - **Verification**: Test CLI commands before documenting them.
 
+## Development Setup
+
+We use `uv` for dependency management. Please ensure you have it installed.
+
+1.  **Sync dependencies**:
+    ```bash
+    uv sync
+    ```
+
+2.  **Run the CLI in development**:
+    ```bash
+    uv run lsp --help
+    ```
+
+## Development Workflow
+
+### Code Style & Quality
+
+We maintain high standards for code quality and type safety:
+
+- **Formatting & Linting**: We use `ruff`.
+  ```bash
+  just lint
+  ```
+- **Type Checking**: We use `ty check`.
+  ```bash
+  just check
+  ```
+- **Testing**: We use `pytest`.
+  ```bash
+  just test
+  ```
+
+### Adding New Commands
+
+`lsp-cli` uses `typer` for its command-line interface. Commands are defined in `src/lsp_cli/__main__.py`.
+
+1.  Define the command using `@app.command()`.
+2.  Use the `Annotated` pattern for arguments and options (see `src/lsp_cli/options.py`).
+3.  Ensure the command uses the `init_client` context manager to interact with the background manager.
+4.  Format the output using `rich`.
+
+### Improving the Manager
+
+The background manager is located in `src/lsp_cli/manager/`. It uses `litestar` to provide a UDS-based API for managing LSP clients.
+
 ## Best Practices Structure
 
 Best practices are organized in `skills/lsp-code-analysis/references/` with hierarchical naming:
@@ -45,14 +91,8 @@ Then add an entry to the appropriate table in `skills/lsp-code-analysis/SKILL.md
 - `modify` — Changing/refactoring code
 - `troubleshoot` — Fixing LSP issues
 
-## Adding Reference Material
-
-For complex capabilities (e.g., `call-hierarchy`):
-
-1. Create `skills/lsp-code-analysis/references/<capability>.md`
-2. Link from `SKILL.md` if it's a core feature
-
 ## Testing Changes
 
 1. Verify `lsp` commands work as described
-2. Repackage: `just package`
+2. Run project tests: `just test`
+3. Repackage: `just package`
