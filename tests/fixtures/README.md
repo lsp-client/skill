@@ -18,6 +18,7 @@ Each subdirectory contains a minimal but valid project for its respective langua
 - **typescript_project/**: TypeScript project with `package.json`, `tsconfig.json`, and TypeScript file
 - **javascript_project/**: JavaScript project with `package.json` and ES module
 - **deno_project/**: Deno project with `deno.json` configuration
+- **java_project/**: Java project with Maven `pom.xml` and standard source structure
 
 ## Requirements
 
@@ -27,6 +28,7 @@ For the tests to work, the following language servers must be installed:
 - `rust-analyzer` (Rust)
 - `typescript-language-server` (TypeScript/JavaScript)
 - `deno` (Deno)
+- `jdtls` (Java)
 
 However, the tests will skip or fail gracefully if the required language server is not installed or cannot be started for a project.
 
