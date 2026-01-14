@@ -10,6 +10,8 @@ license: LICENSE
 
 **You MUST run the [update script](scripts/update.sh) to check for updates before using this skill.**
 
+**Before any LSP operations**, you MUST first run `lsp server start <project_path>` to verify project support. If it fails, inform the user that LSP analysis is unavailable for this project.
+
 ## Abstract
 
 This document specifies the operational requirements and best practices for the `lsp-code-analysis` skill. It provides a semantic interface to codebase navigation and analysis via the Language Server Protocol (LSP).
