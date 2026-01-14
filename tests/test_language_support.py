@@ -8,6 +8,7 @@ This module tests that LSP CLI works correctly with all supported languages:
 - TypeScript
 - JavaScript
 - Deno
+- Java
 
 Each test verifies that the CLI can:
 1. Start a language server for the project
@@ -175,6 +176,38 @@ class TestLanguageSupport(BaseLSPTest):
                 f"Failed to stop Deno server: {stop_result.stderr}"
             )
 
+    def test_java_support(self, fixtures_dir):
+        """Test basic LSP operations with Java project."""
+        java_file = (
+            fixtures_dir
+            / "java_project"
+            / "src"
+            / "main"
+            / "java"
+            / "com"
+            / "example"
+            / "Greeter.java"
+        )
+        assert java_file.exists(), "Java test file does not exist"
+
+        try:
+            # Start server
+            result = self.run_lsp_command("server", "start", str(java_file))
+            assert result.returncode == 0, (
+                f"Failed to start Java server: {result.stderr}"
+            )
+
+            # List servers - should show Java server
+            result = self.run_lsp_command("server", "list")
+            assert result.returncode == 0, f"Failed to list servers: {result.stderr}"
+            assert "java" in result.stdout.lower(), "Java server not listed"
+        finally:
+            # Stop server
+            result = self.run_lsp_command("server", "stop", str(java_file))
+            assert result.returncode == 0, (
+                f"Failed to stop Java server: {result.stderr}"
+            )
+
 
 class TestLanguageServerLifecycle(BaseLSPTest):
     """Test language server lifecycle for all supported languages."""
@@ -185,6 +218,16 @@ class TestLanguageServerLifecycle(BaseLSPTest):
         python_file = fixtures_dir.parent.parent / "src" / "lsp_cli" / "__init__.py"
         go_file = fixtures_dir / "go_project" / "main.go"
         rust_file = fixtures_dir / "rust_project" / "src" / "main.rs"
+        java_file = (
+            fixtures_dir
+            / "java_project"
+            / "src"
+            / "main"
+            / "java"
+            / "com"
+            / "example"
+            / "Greeter.java"
+        )
 
         servers = []
         try:
@@ -202,6 +245,11 @@ class TestLanguageServerLifecycle(BaseLSPTest):
                 result = self.run_lsp_command("server", "start", str(rust_file))
                 if result.returncode == 0:
                     servers.append(("rust", rust_file))
+
+            if java_file.exists():
+                result = self.run_lsp_command("server", "start", str(java_file))
+                if result.returncode == 0:
+                    servers.append(("java", java_file))
 
             # List should show multiple servers
             result = self.run_lsp_command("server", "list")

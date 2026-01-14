@@ -27,8 +27,8 @@ dependencies = [
     "litestar>=2.19.0",
     "xxhash>=3.6.0",
     "tenacity>=9.1.2",
-    "lsp-client>=0.3.0",
     "lsap-sdk>=0.1.0",
+    "lsp-client>=0.3.1",
 ]
 
 [project.scripts]
