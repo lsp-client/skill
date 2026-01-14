@@ -55,6 +55,12 @@ def create_locate(locate_str: str) -> Locate:
                 )
         elif locate.scope.line <= 0:
             raise ValueError("Line number must be a positive integer")
+
+    # Convert relative file_path to absolute path to avoid path duplication
+    # when the workspace root differs from cwd
+    if not locate.file_path.is_absolute():
+        locate = locate.model_copy(update={"file_path": locate.file_path.absolute()})
+
     return locate
 
 
