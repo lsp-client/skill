@@ -14,13 +14,14 @@ app = typer.Typer()
 @cli_syncify
 async def get_symbol(
     locate: op.LocateOpt,
+    project: op.ProjectOpt = None,
 ):
     """
     Get detailed symbol information at a specific location.
     """
     locate_obj = create_locate(locate)
 
-    async with managed_client(locate_obj.file_path) as client:
+    async with managed_client(locate_obj.file_path, project_path=project) as client:
         resp_obj = await client.post(
             "/capability/symbol",
             SymbolResponse,

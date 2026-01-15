@@ -49,3 +49,6 @@ dev = [
 
 [tool.pytest.ini_options]
 norecursedirs = ["references"]
+
+[tool.uv.sources]
+lsp-client = { git = "https://github.com/lsp-client/lsp-client.git" }

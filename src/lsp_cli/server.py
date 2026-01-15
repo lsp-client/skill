@@ -63,7 +63,7 @@ def start_server(
         resp = client.post(
             "/create",
             CreateClientResponse,
-            json=CreateClientRequest(path=path, cwd=Path.cwd()),
+            json=CreateClientRequest(path=path),
         )
         assert resp is not None
         info = resp.info
@@ -86,7 +86,7 @@ def stop_server(
         client.delete(
             "/delete",
             DeleteClientResponse,
-            json=DeleteClientRequest(path=path, cwd=Path.cwd()),
+            json=DeleteClientRequest(path=path),
         )
         print(f"Success: Stopped server for {path}")
 

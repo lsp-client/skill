@@ -19,7 +19,9 @@ def clean_error_msg(msg: str) -> str:
 
 
 @asynccontextmanager
-async def managed_client(path: Path) -> AsyncGenerator[AsyncHttpClient]:
+async def managed_client(
+    path: Path, project_path: Path | None = None
+) -> AsyncGenerator[AsyncHttpClient]:
     path = path.absolute()
     if not path.exists():
         raise FileNotFoundError(f"File not found: {path}")
@@ -28,7 +30,7 @@ async def managed_client(path: Path) -> AsyncGenerator[AsyncHttpClient]:
         info = client.post(
             "/create",
             CreateClientResponse,
-            json=CreateClientRequest(path=path, cwd=Path.cwd()),
+            json=CreateClientRequest(path=path, project_path=project_path),
         )
         assert info is not None
 

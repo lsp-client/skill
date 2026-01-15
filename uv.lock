@@ -278,7 +278,7 @@ requires-dist = [
     { name = "litestar", specifier = ">=2.19.0" },
     { name = "loguru", specifier = ">=0.7.3" },
     { name = "lsap-sdk", specifier = ">=0.1.2" },
-    { name = "lsp-client", specifier = ">=0.3.4" },
+    { name = "lsp-client", git = "https://github.com/lsp-client/lsp-client.git" },
     { name = "platformdirs", specifier = ">=4.5.1" },
     { name = "pydantic", specifier = ">=2.12.5" },
     { name = "pydantic-settings", specifier = ">=2.12.0" },
@@ -300,7 +300,7 @@ dev = [
 [[package]]
 name = "lsp-client"
 version = "0.3.4"
-source = { registry = "https://pypi.org/simple" }
+source = { git = "https://github.com/lsp-client/lsp-client.git#b2b4d67ecc266ac59a70c5d95b67d983de76bb5e" }
 dependencies = [
     { name = "aioshutil" },
     { name = "anyio" },
@@ -312,10 +312,6 @@ dependencies = [
     { name = "semver" },
     { name = "tenacity" },
     { name = "xxhash" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/7d/8a/50e0577fdb568b005634126d23fcbbc43138444e3ef26c67366a9f45c1da/lsp_client-0.3.4.tar.gz", hash = "sha256:5072ad5fd7b1ac8540f75b9720b5e58a029ff9f18361860af847549fd2378176", size = 61166, upload-time = "2026-01-15T16:02:55.767Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/fd/1b/a207f201c3b1d137e693efff98f6b41d6dfc65839e6c0edbbbc4d85c0f77/lsp_client-0.3.4-py3-none-any.whl", hash = "sha256:1869bd6587a58abc373f5ea9f7c9881127aed44e8c71da388d92b757ee03f020", size = 118962, upload-time = "2026-01-15T16:02:54.608Z" },
 ]
 
 [[package]]

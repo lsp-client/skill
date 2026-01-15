@@ -6,7 +6,7 @@ from lsap.schema.models import SymbolKind
 from lsap.schema.outline import OutlineRequest, OutlineResponse
 
 from lsp_cli.utils.sync import cli_syncify
-
+from . import options as op
 from .shared import managed_client
 
 
@@ -28,6 +28,7 @@ async def get_outline(
             help="Show all symbols including local variables and parameters.",
         ),
     ] = False,
+    project: op.ProjectOpt = None,
 ):
     """
     Get the hierarchical symbol outline (classes, functions, etc.) for a specific file.
@@ -35,7 +36,7 @@ async def get_outline(
     if not file_path.is_absolute():
         file_path = file_path.absolute()
 
-    async with managed_client(file_path) as client:
+    async with managed_client(file_path, project_path=project) as client:
         resp_obj = await client.post(
             "/capability/outline",
             OutlineResponse,

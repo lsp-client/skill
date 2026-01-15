@@ -27,6 +27,7 @@ async def get_definition(
     ] = "definition",
     decl: bool = typer.Option(False, "--decl", help="Search for symbol declaration."),
     type_def: bool = typer.Option(False, "--type", help="Search for type definition."),
+    project: op.ProjectOpt = None,
 ):
     """
     Find the definition (default), declaration (--decl), or type definition (--type) of a symbol.
@@ -41,7 +42,7 @@ async def get_definition(
 
     locate_obj = create_locate(locate)
 
-    async with managed_client(locate_obj.file_path) as client:
+    async with managed_client(locate_obj.file_path, project_path=project) as client:
         resp_obj = await client.post(
             "/capability/definition",
             DefinitionResponse,
