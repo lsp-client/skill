@@ -10,6 +10,7 @@ import time
 from pathlib import Path
 
 import pytest
+from conftest import BaseLSPTest
 
 
 @pytest.fixture(scope="module")
@@ -140,6 +141,72 @@ class TestRapidCLICommands:
         # All commands should succeed
         failures = [stderr for success, stderr in results if not success]
         assert not failures, f"Some concurrent commands failed: {failures}"
+
+
+class TestPathNormalization(BaseLSPTest):
+    """Test that relative paths are correctly normalized to absolute paths."""
+
+    def test_server_start_relative_path_from_subdir(self):
+        """Test that starting a server with a relative path from a subdirectory works."""
+        root_dir = Path(__file__).parent.parent
+        # Use Python project as it's more reliable in this environment
+        project_dir = root_dir / "src" / "lsp_cli"
+        target_file_rel = Path("__init__.py")
+
+        try:
+            result = subprocess.run(
+                ["uv", "run", "lsp", "server", "start", str(target_file_rel)],
+                capture_output=True,
+                text=True,
+                cwd=str(project_dir),
+                timeout=30,
+            )
+
+            assert result.returncode == 0, f"Command failed: {result.stderr}"
+            assert str(project_dir / target_file_rel) in result.stdout
+            assert "Success" in result.stdout
+
+        finally:
+            subprocess.run(
+                ["uv", "run", "lsp", "server", "stop", str(target_file_rel)],
+                cwd=str(project_dir),
+                capture_output=True,
+                timeout=30,
+            )
+
+    def test_outline_relative_path_normalization(self):
+        """Test that outline command normalizes relative paths."""
+        root_dir = Path(__file__).parent.parent
+        project_dir = root_dir / "src" / "lsp_cli"
+        target_file_rel = Path("__init__.py")
+
+        # Start server first to ensure it's running
+        subprocess.run(
+            ["uv", "run", "lsp", "server", "start", str(target_file_rel)],
+            cwd=str(project_dir),
+            capture_output=True,
+            timeout=30,
+        )
+        time.sleep(2)
+
+        try:
+            result = subprocess.run(
+                ["uv", "run", "lsp", "outline", str(target_file_rel)],
+                capture_output=True,
+                text=True,
+                cwd=str(project_dir),
+                timeout=30,
+            )
+
+            assert result.returncode == 0, f"Outline failed: {result.stderr}"
+
+        finally:
+            subprocess.run(
+                ["uv", "run", "lsp", "server", "stop", str(target_file_rel)],
+                cwd=str(project_dir),
+                capture_output=True,
+                timeout=30,
+            )
 
 
 class TestConnectionReliability:

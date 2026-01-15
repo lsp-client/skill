@@ -63,13 +63,27 @@ async def rename_execute(
     if workspace is None:
         workspace = Path.cwd()
 
+    if not workspace.is_absolute():
+        workspace = workspace.absolute()
+
+    # Normalize exclude paths and globs to absolute paths/globs
+    normalized_exclude = []
+    if exclude:
+        cwd = Path.cwd()
+        for p in exclude:
+            p_obj = Path(p)
+            if p_obj.is_absolute():
+                normalized_exclude.append(p)
+            else:
+                normalized_exclude.append(str(cwd / p))
+
     async with managed_client(workspace) as client:
         resp_obj = await client.post(
             "/capability/rename/execute",
             RenameExecuteResponse,
             json=RenameExecuteRequest(
                 rename_id=rename_id,
-                exclude_files=exclude or [],
+                exclude_files=normalized_exclude,
             ),
         )
 

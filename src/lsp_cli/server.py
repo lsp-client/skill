@@ -56,13 +56,16 @@ def start_server(
     ),
 ):
     """Start a background LSP server for the project containing the specified path."""
+    if not path.is_absolute():
+        path = path.absolute()
+
     with get_manager_client() as client:
         resp = client.post(
             "/create", CreateClientResponse, json=CreateClientRequest(path=path)
         )
         assert resp is not None
         info = resp.info
-        print(f"Success: Started server for {path.absolute()}")
+        print(f"Success: Started server for {path}")
         print(ManagedClientInfo.format(info))
 
 
@@ -74,11 +77,14 @@ def stop_server(
     ),
 ):
     """Stop the background LSP server for the project containing the specified path."""
+    if not path.is_absolute():
+        path = path.absolute()
+
     with get_manager_client() as client:
         client.delete(
             "/delete", DeleteClientResponse, json=DeleteClientRequest(path=path)
         )
-        print(f"Success: Stopped server for {path.absolute()}")
+        print(f"Success: Stopped server for {path}")
 
 
 if __name__ == "__main__":
