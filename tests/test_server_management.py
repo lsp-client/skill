@@ -116,7 +116,7 @@ class TestClientLifecycle:
             resp = client.post(
                 "/create",
                 CreateClientResponse,
-                json=CreateClientRequest(path=test_file),
+                json=CreateClientRequest(path=test_file, cwd=Path.cwd()),
             )
             assert resp is not None
 
@@ -138,7 +138,7 @@ class TestClientLifecycle:
             resp1 = client.post(
                 "/create",
                 CreateClientResponse,
-                json=CreateClientRequest(path=test_file),
+                json=CreateClientRequest(path=test_file, cwd=Path.cwd()),
             )
             assert resp1 is not None
             uds_path1 = resp1.uds_path
@@ -151,7 +151,7 @@ class TestClientLifecycle:
             resp2 = client.post(
                 "/create",
                 CreateClientResponse,
-                json=CreateClientRequest(path=test_file),
+                json=CreateClientRequest(path=test_file, cwd=Path.cwd()),
             )
             assert resp2 is not None
             assert resp2.uds_path == uds_path1
@@ -167,7 +167,7 @@ class TestClientLifecycle:
             create_resp = client.post(
                 "/create",
                 CreateClientResponse,
-                json=CreateClientRequest(path=test_file),
+                json=CreateClientRequest(path=test_file, cwd=Path.cwd()),
             )
             assert create_resp is not None
             uds_path = create_resp.uds_path
@@ -176,7 +176,7 @@ class TestClientLifecycle:
             delete_resp = client.delete(
                 "/delete",
                 DeleteClientResponse,
-                json=DeleteClientRequest(path=test_file),
+                json=DeleteClientRequest(path=test_file, cwd=Path.cwd()),
             )
             assert delete_resp is not None
 
@@ -200,7 +200,7 @@ class TestClientLifecycle:
             resp1 = client.post(
                 "/create",
                 CreateClientResponse,
-                json=CreateClientRequest(path=test_file),
+                json=CreateClientRequest(path=test_file, cwd=Path.cwd()),
             )
             assert resp1 is not None
 
@@ -239,7 +239,7 @@ class TestConcurrentAccess:
                         resp = await client.post(
                             "/create",
                             CreateClientResponse,
-                            json=CreateClientRequest(path=file),
+                            json=CreateClientRequest(path=file, cwd=Path.cwd()),
                         )
                         if resp:
                             # Wait for socket to be created
@@ -295,7 +295,7 @@ class TestConcurrentAccess:
                         return await client.post(
                             "/create",
                             CreateClientResponse,
-                            json=CreateClientRequest(path=file),
+                            json=CreateClientRequest(path=file, cwd=Path.cwd()),
                         )
                     except httpx.HTTPStatusError:
                         pass
@@ -361,7 +361,7 @@ class TestClientSocket:
             resp = mgr_client.post(
                 "/create",
                 CreateClientResponse,
-                json=CreateClientRequest(path=test_file),
+                json=CreateClientRequest(path=test_file, cwd=Path.cwd()),
             )
             assert resp is not None
             uds_path = resp.uds_path
@@ -414,7 +414,9 @@ class TestErrorHandling:
                 client.post(
                     "/create",
                     CreateClientResponse,
-                    json=CreateClientRequest(path=Path("/non/existent/path.py")),
+                    json=CreateClientRequest(
+                        path=Path("/non/existent/path.py"), cwd=Path.cwd()
+                    ),
                 )
             except httpx.HTTPStatusError as e:
                 assert e.response.status_code in (404, 500)
@@ -427,7 +429,7 @@ class TestErrorHandling:
             resp = client.delete(
                 "/delete",
                 DeleteClientResponse,
-                json=DeleteClientRequest(path=non_existent),
+                json=DeleteClientRequest(path=non_existent, cwd=Path.cwd()),
             )
             # Should succeed even if client doesn't exist
             assert resp is not None
@@ -451,7 +453,7 @@ class TestStressTests:
                         await client.post(
                             "/create",
                             CreateClientResponse,
-                            json=CreateClientRequest(path=test_file),
+                            json=CreateClientRequest(path=test_file, cwd=Path.cwd()),
                         )
                         # List clients
                         await client.get("/list", ManagedClientInfoList)
@@ -483,14 +485,14 @@ class TestStressTests:
                         await client.post(
                             "/create",
                             CreateClientResponse,
-                            json=CreateClientRequest(path=test_file),
+                            json=CreateClientRequest(path=test_file, cwd=Path.cwd()),
                         )
                         await anyio.sleep(0.05)
                         # Delete
                         await client.delete(
                             "/delete",
                             DeleteClientResponse,
-                            json=DeleteClientRequest(path=test_file),
+                            json=DeleteClientRequest(path=test_file, cwd=Path.cwd()),
                         )
                         return True
                     except Exception:
@@ -528,7 +530,7 @@ class TestRealWorldScenarios:
                         resp = await client.post(
                             "/create",
                             CreateClientResponse,
-                            json=CreateClientRequest(path=test_file),
+                            json=CreateClientRequest(path=test_file, cwd=Path.cwd()),
                         )
                         if resp:
                             return True
@@ -559,7 +561,7 @@ class TestRealWorldScenarios:
             create_resp = client.post(
                 "/create",
                 CreateClientResponse,
-                json=CreateClientRequest(path=test_file),
+                json=CreateClientRequest(path=test_file, cwd=Path.cwd()),
             )
             assert create_resp is not None
 
@@ -575,7 +577,7 @@ class TestRealWorldScenarios:
             create_resp2 = client.post(
                 "/create",
                 CreateClientResponse,
-                json=CreateClientRequest(path=test_file),
+                json=CreateClientRequest(path=test_file, cwd=Path.cwd()),
             )
             assert create_resp2 is not None
             assert create_resp2.uds_path == create_resp.uds_path
@@ -585,7 +587,7 @@ class TestRealWorldScenarios:
             delete_resp = client.delete(
                 "/delete",
                 DeleteClientResponse,
-                json=DeleteClientRequest(path=test_file),
+                json=DeleteClientRequest(path=test_file, cwd=Path.cwd()),
             )
             assert delete_resp is not None
 
