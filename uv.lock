@@ -278,7 +278,7 @@ requires-dist = [
     { name = "litestar", specifier = ">=2.19.0" },
     { name = "loguru", specifier = ">=0.7.3" },
     { name = "lsap-sdk", specifier = ">=0.1.2" },
-    { name = "lsp-client", specifier = ">=0.3.4" },
+    { name = "lsp-client", specifier = ">=0.3.5" },
     { name = "platformdirs", specifier = ">=4.5.1" },
     { name = "pydantic", specifier = ">=2.12.5" },
     { name = "pydantic-settings", specifier = ">=2.12.0" },
@@ -299,7 +299,7 @@ dev = [
 
 [[package]]
 name = "lsp-client"
-version = "0.3.4"
+version = "0.3.5"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aioshutil" },
@@ -313,9 +313,9 @@ dependencies = [
     { name = "tenacity" },
     { name = "xxhash" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/7d/8a/50e0577fdb568b005634126d23fcbbc43138444e3ef26c67366a9f45c1da/lsp_client-0.3.4.tar.gz", hash = "sha256:5072ad5fd7b1ac8540f75b9720b5e58a029ff9f18361860af847549fd2378176", size = 61166, upload-time = "2026-01-15T16:02:55.767Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/b1/e1/f4eb7e8905f1f8c898b47a1ebae38d529122e542ee7703da20d8a2b1cbdb/lsp_client-0.3.5.tar.gz", hash = "sha256:7b86fcf4ad5a194e730d283dfa766b6a22a5d735b5ad55ce75eeca65bc9c6b0f", size = 60418, upload-time = "2026-01-15T19:17:02.573Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/fd/1b/a207f201c3b1d137e693efff98f6b41d6dfc65839e6c0edbbbc4d85c0f77/lsp_client-0.3.4-py3-none-any.whl", hash = "sha256:1869bd6587a58abc373f5ea9f7c9881127aed44e8c71da388d92b757ee03f020", size = 118962, upload-time = "2026-01-15T16:02:54.608Z" },
+    { url = "https://files.pythonhosted.org/packages/09/b3/ac4c57109976346226c7a4424b408c92b51a588b7b361caea4e9334938de/lsp_client-0.3.5-py3-none-any.whl", hash = "sha256:794161b912d66c86e6815369ece5f75e2952645fc8e57ed906eb14b67b251434", size = 118203, upload-time = "2026-01-15T19:17:01.032Z" },
 ]
 
 [[package]]
