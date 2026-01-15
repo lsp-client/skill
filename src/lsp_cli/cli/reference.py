@@ -9,7 +9,6 @@ from lsp_cli.utils.sync import cli_syncify
 from . import options as op
 from .shared import create_locate, managed_client
 
-
 app = typer.Typer()
 
 
@@ -39,6 +38,7 @@ async def get_reference(
     max_items: op.MaxItemsOpt = None,
     start_index: op.StartIndexOpt = 0,
     pagination_id: op.PaginationIdOpt = None,
+    project: op.ProjectOpt = None,
 ):
     """
     Find references (default) or implementations (--impl) of a symbol.
@@ -53,7 +53,7 @@ async def get_reference(
 
     locate_obj = create_locate(locate)
 
-    async with managed_client(locate_obj.file_path) as client:
+    async with managed_client(locate_obj.file_path, project_path=project) as client:
         effective_context_lines = (
             context_lines
             if context_lines is not None

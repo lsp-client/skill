@@ -5,8 +5,8 @@ from lsap.schema.locate import LocateRequest, LocateResponse
 
 from lsp_cli.utils.sync import cli_syncify
 
+from . import options as op
 from .shared import create_locate, managed_client
-
 
 app = typer.Typer()
 
@@ -21,6 +21,7 @@ async def get_location(
         "-c",
         help="Verify if the target exists in the file and show its context.",
     ),
+    project: op.ProjectOpt = None,
 ):
     """
     Locate a position or range in the codebase using a string syntax.
@@ -51,7 +52,7 @@ async def get_location(
     """
     locate_obj = create_locate(locate)
 
-    async with managed_client(locate_obj.file_path) as client:
+    async with managed_client(locate_obj.file_path, project_path=project) as client:
         resp_obj = await client.post(
             "/capability/locate", LocateResponse, json=LocateRequest(locate=locate_obj)
         )

@@ -47,3 +47,11 @@ PaginationIdOpt = Annotated[
         help="Pagination token",
     ),
 ]
+
+ProjectOpt = Annotated[
+    Path | None,
+    typer.Option(
+        "--project",
+        help="Path to the project. If specified, start a server in this directory.",
+    ),
+]

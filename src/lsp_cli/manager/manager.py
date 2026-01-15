@@ -14,7 +14,7 @@ from litestar.di import Provide
 from litestar.exceptions import NotFoundException
 from loguru import logger
 
-from lsp_cli.client import find_client
+from lsp_cli.client import ClientTarget, find_target, match_target
 from lsp_cli.settings import LOG_DIR, settings
 
 from .client import ManagedClient, get_client_id
@@ -49,8 +49,15 @@ class Manager:
             f"[Manager] Manager log initialized at {log_path} (level: {log_level})"
         )
 
-    async def create_client(self, path: Path, cwd: Path) -> Path:
-        target = find_client(path, cwd)
+    def _get_target(
+        self, path: Path, project_path: Path | None = None
+    ) -> ClientTarget | None:
+        if project_path:
+            return match_target(project_path)
+        return find_target(path)
+
+    async def create_client(self, path: Path, project_path: Path | None = None) -> Path:
+        target = self._get_target(path, project_path)
         if not target:
             raise NotFoundException(f"No LSP client found for path: {path}")
 
@@ -77,15 +84,17 @@ class Manager:
             logger.info(f"[Manager] Removing client: {client.id}")
             self._clients.pop(client.id, None)
 
-    async def delete_client(self, path: Path, cwd: Path):
-        if target := find_client(path, cwd):
+    async def delete_client(self, path: Path, project_path: Path | None = None):
+        if target := self._get_target(path, project_path):
             client_id = get_client_id(target)
             if client := self._clients.get(client_id):
                 logger.info(f"[Manager] Stopping client: {client_id}")
                 client.stop()
 
-    def inspect_client(self, path: Path, cwd: Path) -> ManagedClientInfo | None:
-        if target := find_client(path, cwd):
+    def inspect_client(
+        self, path: Path, project_path: Path | None = None
+    ) -> ManagedClientInfo | None:
+        if target := self._get_target(path, project_path):
             client_id = get_client_id(target)
             if client := self._clients.get(client_id):
                 return client.info
@@ -131,8 +140,8 @@ async def create_client_handler(
     data: CreateClientRequest, state: State
 ) -> CreateClientResponse:
     manager = get_manager(state)
-    uds_path = await manager.create_client(data.path, data.cwd)
-    info = manager.inspect_client(data.path, data.cwd)
+    uds_path = await manager.create_client(data.path, project_path=data.project_path)
+    info = manager.inspect_client(data.path, project_path=data.project_path)
     if not info:
         raise RuntimeError("Failed to create client")
 
@@ -144,8 +153,8 @@ async def delete_client_handler(
     data: DeleteClientRequest, state: State
 ) -> DeleteClientResponse:
     manager = get_manager(state)
-    info = manager.inspect_client(data.path, data.cwd)
-    await manager.delete_client(data.path, data.cwd)
+    info = manager.inspect_client(data.path, project_path=data.project_path)
+    await manager.delete_client(data.path, project_path=data.project_path)
 
     return DeleteClientResponse(info=info)
 

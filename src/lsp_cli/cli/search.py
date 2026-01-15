@@ -11,7 +11,6 @@ from lsp_cli.utils.sync import cli_syncify
 from . import options as op
 from .shared import managed_client
 
-
 app = typer.Typer()
 
 
@@ -34,6 +33,7 @@ async def search(
     max_items: op.MaxItemsOpt = None,
     start_index: op.StartIndexOpt = 0,
     pagination_id: op.PaginationIdOpt = None,
+    project: op.ProjectOpt = None,
 ):
     """
     Search for symbols across the entire workspace by name query.
@@ -41,7 +41,7 @@ async def search(
     if workspace is None:
         workspace = Path.cwd()
 
-    async with managed_client(workspace) as client:
+    async with managed_client(workspace, project_path=project) as client:
         effective_max_items = (
             max_items if max_items is not None else settings.default_max_items
         )

@@ -49,6 +49,8 @@ Most commands use a unified **Locate String** syntax via the `-L` or `--locate` 
 
 **Syntax**: `<file_path>[:<scope>][@<find>]`
 
+For Monorepo or Multi-root workspaces, see [monorepo.md](references/monorepo.md).
+
 **Scope Formats**:
 
 - `<line>`: Single line number (e.g., `42`).
@@ -333,5 +335,6 @@ lsp locate "main.py:42@process<|>" --check
 
 For specialized scenarios, see:
 
+- **Monorepo**: [monorepo.md](references/monorepo.md)
 - **Frontend**: [bp_frontend.md](references/bp_frontend.md)
 - **Backend**: [bp_backend.md](references/bp_backend.md)

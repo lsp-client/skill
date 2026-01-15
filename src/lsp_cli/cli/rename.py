@@ -14,7 +14,6 @@ from lsp_cli.utils.sync import cli_syncify
 from . import options as op
 from .shared import create_locate, managed_client
 
-
 app = typer.Typer(name="rename", help="Rename a symbol at a specific location.")
 
 
@@ -23,6 +22,7 @@ app = typer.Typer(name="rename", help="Rename a symbol at a specific location.")
 async def rename_preview(
     new_name: Annotated[str, typer.Argument(help="The new name for the symbol.")],
     locate: op.LocateOpt,
+    project: op.ProjectOpt = None,
 ):
     """
     Preview the effects of renaming a symbol at a specific location.
@@ -30,7 +30,7 @@ async def rename_preview(
 
     locate_obj = create_locate(locate)
 
-    async with managed_client(locate_obj.file_path) as client:
+    async with managed_client(locate_obj.file_path, project_path=project) as client:
         resp_obj = await client.post(
             "/capability/rename/preview",
             RenamePreviewResponse,
@@ -57,6 +57,7 @@ async def rename_execute(
         ),
     ] = None,
     workspace: op.WorkspaceOpt = None,
+    project: op.ProjectOpt = None,
 ):
     """
     Execute a rename operation using the ID from a previous preview.
@@ -78,7 +79,7 @@ async def rename_execute(
             else:
                 normalized_exclude.append(str(cwd / p))
 
-    async with managed_client(workspace) as client:
+    async with managed_client(workspace, project_path=project) as client:
         resp_obj = await client.post(
             "/capability/rename/execute",
             RenameExecuteResponse,
