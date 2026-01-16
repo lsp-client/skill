@@ -1,9 +1,10 @@
 from typing import Annotated
 
 import typer
+from loguru import logger
 
+from lsp_cli.settings import CLI_LOG_PATH
 from lsp_cli.utils.debug import setup_debug
-from lsp_cli.settings import CLI_LOG_PATH, settings
 
 
 def main_callback(
