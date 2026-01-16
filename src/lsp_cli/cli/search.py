@@ -6,6 +6,7 @@ from lsap.schema.models import SymbolKind
 from lsap.schema.search import SearchRequest, SearchResponse
 
 from lsp_cli.settings import settings
+from lsp_cli.utils.debug import setup_debug
 from lsp_cli.utils.sync import cli_syncify
 
 from . import options as op
@@ -34,10 +35,12 @@ async def search(
     start_index: op.StartIndexOpt = 0,
     pagination_id: op.PaginationIdOpt = None,
     project: op.ProjectOpt = None,
+    debug: op.DebugOpt = False,
 ) -> None:
     """
     Search for symbols across the entire workspace by name query.
     """
+    setup_debug(debug)
     if workspace is None:
         workspace = Path.cwd()
 

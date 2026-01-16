@@ -9,6 +9,7 @@ from lsap.schema.rename import (
     RenamePreviewResponse,
 )
 
+from lsp_cli.utils.debug import setup_debug
 from lsp_cli.utils.sync import cli_syncify
 
 from . import options as op
@@ -23,11 +24,12 @@ async def rename_preview(
     new_name: Annotated[str, typer.Argument(help="The new name for the symbol.")],
     locate: op.LocateOpt,
     project: op.ProjectOpt = None,
+    debug: op.DebugOpt = False,
 ) -> None:
     """
     Preview the effects of renaming a symbol at a specific location.
     """
-
+    setup_debug(debug)
     locate_obj = create_locate(locate)
 
     async with managed_client(locate_obj.file_path, project_path=project) as client:
@@ -58,10 +60,12 @@ async def rename_execute(
     ] = None,
     workspace: op.WorkspaceOpt = None,
     project: op.ProjectOpt = None,
+    debug: op.DebugOpt = False,
 ) -> None:
     """
     Execute a rename operation using the ID from a previous preview.
     """
+    setup_debug(debug)
     if workspace is None:
         workspace = Path.cwd()
 

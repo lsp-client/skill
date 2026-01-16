@@ -1,25 +1,15 @@
-import sys
-
 import typer
-from loguru import logger
 
-from lsp_cli.settings import settings
+from lsp_cli.utils.debug import setup_debug
+
+from . import options as op
 
 
 def main_callback(
     ctx: typer.Context,
-    debug: bool = typer.Option(
-        False,
-        "--debug",
-        "-d",
-        help="Enable verbose debug logging for troubleshooting.",
-    ),
+    debug: op.DebugOpt = False,
 ) -> None:
-    if debug:
-        settings.debug = True
-
-    logger.remove()
-    logger.add(sys.stderr, level=settings.effective_log_level)
+    setup_debug(debug)
 
     ctx.ensure_object(dict)
     if ctx.invoked_subcommand is None:

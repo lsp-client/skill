@@ -3,6 +3,7 @@ from typing import Annotated
 import typer
 from lsap.schema.locate import LocateRequest, LocateResponse
 
+from lsp_cli.utils.debug import setup_debug
 from lsp_cli.utils.sync import cli_syncify
 
 from . import options as op
@@ -22,34 +23,12 @@ async def get_location(
         help="Verify if the target exists in the file and show its context.",
     ),
     project: op.ProjectOpt = None,
+    debug: op.DebugOpt = False,
 ) -> None:
     """
     Locate a position or range in the codebase using a string syntax.
-
-    Syntax: `<file_path>[:<scope>][@<find>]`
-
-    Scope formats:
-
-    - `<line>` - Single line number (e.g., `42`)
-
-    - `<start>,<end>` - Line range with comma (e.g., `10,20`)
-
-    - `<start>-<end>` - Line range with dash (e.g., `10-20`)
-
-    - `<symbol_path>` - Symbol path with dots (e.g., `MyClass.my_method`)
-
-    Examples:
-
-    - `foo.py@self.<|>`
-
-    - `foo.py:42@return <|>result`
-
-    - `foo.py:10,20@if <|>condition`
-
-    - `foo.py:MyClass.my_method@self.<|>`
-
-    - `foo.py:MyClass`
     """
+    setup_debug(debug)
     locate_obj = create_locate(locate)
 
     async with managed_client(locate_obj.file_path, project_path=project) as client:

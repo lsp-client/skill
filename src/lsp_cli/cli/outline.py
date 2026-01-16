@@ -5,6 +5,7 @@ import typer
 from lsap.schema.models import SymbolKind
 from lsap.schema.outline import OutlineRequest, OutlineResponse
 
+from lsp_cli.utils.debug import setup_debug
 from lsp_cli.utils.sync import cli_syncify
 
 from . import options as op
@@ -29,10 +30,12 @@ async def get_outline(
         ),
     ] = False,
     project: op.ProjectOpt = None,
+    debug: op.DebugOpt = False,
 ) -> None:
     """
     Get the hierarchical symbol outline (classes, functions, etc.) for a specific file.
     """
+    setup_debug(debug)
     if not file_path.is_absolute():
         file_path = file_path.absolute()
 
