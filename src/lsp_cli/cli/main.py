@@ -1,13 +1,20 @@
+from typing import Annotated
+
 import typer
 
 from lsp_cli.utils.debug import setup_debug
 
-from . import options as op
-
 
 def main_callback(
     ctx: typer.Context,
-    debug: op.DebugOpt = False,
+    debug: Annotated[
+        bool,
+        typer.Option(
+            "--debug",
+            "-d",
+            help="Enable verbose debug logging for troubleshooting.",
+        ),
+    ] = False,
 ) -> None:
     setup_debug(debug)
 

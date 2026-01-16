@@ -4,7 +4,6 @@ import typer
 from lsap.schema.reference import ReferenceRequest, ReferenceResponse
 
 from lsp_cli.settings import settings
-from lsp_cli.utils.debug import setup_debug
 from lsp_cli.utils.sync import cli_syncify
 
 from . import options as op
@@ -40,12 +39,10 @@ async def get_reference(
     start_index: op.StartIndexOpt = 0,
     pagination_id: op.PaginationIdOpt = None,
     project: op.ProjectOpt = None,
-    debug: op.DebugOpt = False,
 ) -> None:
     """
     Find references (default) or implementations (--impl) of a symbol.
     """
-    setup_debug(debug)
     if impl and references:
         raise ValueError("--impl and --ref are mutually exclusive")
 

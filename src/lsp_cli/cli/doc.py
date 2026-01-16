@@ -1,7 +1,6 @@
 import typer
 from lsap.schema.doc import DocRequest, DocResponse
 
-from lsp_cli.utils.debug import setup_debug
 from lsp_cli.utils.sync import cli_syncify
 
 from . import options as op
@@ -15,12 +14,10 @@ app = typer.Typer()
 async def get_doc(
     locate: op.LocateOpt,
     project: op.ProjectOpt = None,
-    debug: op.DebugOpt = False,
 ) -> None:
     """
     Get documentation and type information for a symbol at a specific location.
     """
-    setup_debug(debug)
     locate_obj = create_locate(locate)
 
     async with managed_client(locate_obj.file_path, project_path=project) as client:

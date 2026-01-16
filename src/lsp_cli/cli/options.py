@@ -55,12 +55,3 @@ ProjectOpt = Annotated[
         help="Path to the project. If specified, start a server in this directory.",
     ),
 ]
-
-DebugOpt = Annotated[
-    bool,
-    typer.Option(
-        "--debug",
-        "-d",
-        help="Enable verbose debug logging for troubleshooting.",
-    ),
-]

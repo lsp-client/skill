@@ -3,7 +3,6 @@ from typing import Annotated
 
 import typer
 
-from lsp_cli.cli import options as op
 from lsp_cli.manager import (
     CreateClientRequest,
     CreateClientResponse,
@@ -13,7 +12,6 @@ from lsp_cli.manager import (
     ManagedClientInfoList,
     connect_manager,
 )
-from lsp_cli.utils.debug import setup_debug
 from lsp_cli.utils.http import HttpClient
 
 app = typer.Typer(
@@ -38,9 +36,8 @@ ProjectOpt = Annotated[
 
 
 @app.callback(invoke_without_command=True)
-def callback(ctx: typer.Context, debug: op.DebugOpt = False) -> None:
+def callback(ctx: typer.Context) -> None:
     """Manage LSP servers."""
-    setup_debug(debug)
     if ctx.invoked_subcommand is None:
         list_servers()
 
@@ -50,9 +47,8 @@ def get_manager_client() -> HttpClient:
 
 
 @app.command("list")
-def list_servers(debug: op.DebugOpt = False) -> None:
+def list_servers() -> None:
     """List all currently running and managed LSP servers."""
-    setup_debug(debug)
     with get_manager_client() as client:
         resp = client.get("/list", ManagedClientInfoList)
         servers = resp.root if resp else []
@@ -69,10 +65,8 @@ def start_server(
         help="Path to a code file or project directory to start the LSP server for.",
     ),
     project: ProjectOpt = None,
-    debug: op.DebugOpt = False,
 ) -> None:
     """Start a background LSP server for the project containing the specified path."""
-    setup_debug(debug)
     if path is None:
         path = Path.cwd()
 
@@ -98,10 +92,8 @@ def stop_server(
         help="Path to a code file or project directory to stop the LSP server for.",
     ),
     project: ProjectOpt = None,
-    debug: op.DebugOpt = False,
 ) -> None:
     """Stop the background LSP server for the project containing the specified path."""
-    setup_debug(debug)
     if path is None:
         path = Path.cwd()
 

@@ -3,7 +3,6 @@ from typing import Annotated
 import typer
 from lsap.schema.locate import LocateRequest, LocateResponse
 
-from lsp_cli.utils.debug import setup_debug
 from lsp_cli.utils.sync import cli_syncify
 
 from . import options as op
@@ -23,12 +22,10 @@ async def get_location(
         help="Verify if the target exists in the file and show its context.",
     ),
     project: op.ProjectOpt = None,
-    debug: op.DebugOpt = False,
 ) -> None:
     """
     Locate a position or range in the codebase using a string syntax.
     """
-    setup_debug(debug)
     locate_obj = create_locate(locate)
 
     async with managed_client(locate_obj.file_path, project_path=project) as client:

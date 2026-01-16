@@ -3,7 +3,6 @@ from typing import Annotated, Literal
 import typer
 from lsap.schema.definition import DefinitionRequest, DefinitionResponse
 
-from lsp_cli.utils.debug import setup_debug
 from lsp_cli.utils.sync import cli_syncify
 
 from . import options as op
@@ -28,12 +27,10 @@ async def get_definition(
     decl: bool = typer.Option(False, "--decl", help="Search for symbol declaration."),
     type_def: bool = typer.Option(False, "--type", help="Search for type definition."),
     project: op.ProjectOpt = None,
-    debug: op.DebugOpt = False,
 ) -> None:
     """
     Find the definition (default), declaration (--decl), or type definition (--type) of a symbol.
     """
-    setup_debug(debug)
     if decl and type_def:
         raise ValueError("--decl and --type are mutually exclusive")
 
