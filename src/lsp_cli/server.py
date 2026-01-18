@@ -109,9 +109,7 @@ def stop_server(
         if resp and resp.info:
             print(f"Success: Stopped server for {path}")
         else:
-            typer.secho(
-                f"Warning: No server running for {path}", fg=typer.colors.YELLOW
-            )
+            print(f"Warning: No server running for {path}")
 
 
 if __name__ == "__main__":
