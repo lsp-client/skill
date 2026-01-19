@@ -1,5 +1,3 @@
-from typing import Annotated, Literal
-
 import typer
 from lsap.schema.definition import DefinitionRequest, DefinitionResponse
 
@@ -15,15 +13,6 @@ app = typer.Typer()
 @cli_syncify
 async def get_definition(
     locate: op.LocateOpt,
-    mode: Annotated[
-        Literal["definition", "declaration", "type_definition"],
-        typer.Option(
-            "--mode",
-            "-m",
-            help="Search mode (default: definition).",
-            hidden=True,
-        ),
-    ] = "definition",
     decl: bool = typer.Option(False, "--decl", help="Search for symbol declaration."),
     type_def: bool = typer.Option(False, "--type", help="Search for type definition."),
     project: op.ProjectOpt = None,
@@ -34,6 +23,7 @@ async def get_definition(
     if decl and type_def:
         raise ValueError("--decl and --type are mutually exclusive")
 
+    mode = "definition"
     if decl:
         mode = "declaration"
     elif type_def:
