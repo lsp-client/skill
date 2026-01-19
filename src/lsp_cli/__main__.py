@@ -15,7 +15,6 @@ from lsp_cli.cli import (
     symbol,
 )
 from lsp_cli.cli.main import main_callback
-from lsp_cli.cli.shared import get_msg
 from lsp_cli.server import app as server_app
 from lsp_cli.settings import CLI_LOG_PATH, CLIENT_LOG_DIR, MANAGER_LOG_PATH, settings
 
@@ -49,7 +48,6 @@ app.add_typer(search.app)
 
 
 def run() -> None:
-    # Suppress httpx INFO logs in CLI (unless debug mode)
     if not settings.debug:
         logging.getLogger("httpx").setLevel(logging.WARNING)
 
@@ -61,7 +59,6 @@ def run() -> None:
         if settings.debug:
             raise
         logger.opt(exception=e).debug("Unhandled exception")
-        print(f"Error: {get_msg(e)}", file=sys.stderr)
         print("\nFor more details, see the log files:", file=sys.stderr)
         print(f"  CLI:     {CLI_LOG_PATH}", file=sys.stderr)
         print(f"  Manager: {MANAGER_LOG_PATH}", file=sys.stderr)

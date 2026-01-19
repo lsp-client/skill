@@ -150,6 +150,6 @@ class ManagedClient:
         finally:
             self._logger.info("Cleaning up client")
             await uds_path.unlink(missing_ok=True)
-            self._logger.remove(self._logger_sink_id)
+            global_logger.remove(self._logger_sink_id)
             self._timeout_scope.cancel()
             self._server_scope.cancel()

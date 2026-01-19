@@ -6,10 +6,9 @@ from pathlib import Path
 import httpx
 from lsap.schema.locate import LineScope, Locate
 from lsap.utils.locate import parse_locate_string
-from pydantic import ValidationError
 
-from lsp_cli.manager import CreateClientRequest, CreateClientResponse
-from lsp_cli.server import get_manager_client
+from lsp_cli.manager.manager import connect_manager
+from lsp_cli.manager.models import CreateClientRequest, CreateClientResponse
 from lsp_cli.utils.http import AsyncHttpClient
 from lsp_cli.utils.socket import wait_socket
 
@@ -22,19 +21,17 @@ def clean_error_msg(msg: str) -> str:
 async def managed_client(
     path: Path, project_path: Path | None = None
 ) -> AsyncGenerator[AsyncHttpClient]:
-    path = path.absolute()
     if not path.exists():
         raise FileNotFoundError(f"File not found: {path}")
 
-    with get_manager_client() as client:
-        info = client.post(
+    async with connect_manager() as client:
+        resp = await client.post(
             "/create",
             CreateClientResponse,
-            json=CreateClientRequest(path=path, project_path=project_path),
+            json=CreateClientRequest(path=path.absolute(), project_path=project_path),
         )
-        assert info is not None
 
-    uds_path = info.uds_path
+    uds_path = resp.uds_path
     await wait_socket(uds_path, timeout=10.0)
 
     transport = httpx.AsyncHTTPTransport(uds=uds_path.as_posix())
@@ -65,33 +62,3 @@ def create_locate(locate_str: str) -> Locate:
         raise FileNotFoundError(f"File not found: {locate.file_path}")
 
     return locate
-
-
-def get_msg(err: Exception | ExceptionGroup) -> str:
-    match err:
-        case ExceptionGroup():
-            return "\n".join(get_msg(se) for se in err.exceptions)
-        case ValidationError():
-            msgs = []
-            for e in err.errors():
-                m = str(e["msg"])
-                if m.startswith("Value error, "):
-                    m = m[len("Value error, ") :]
-                msgs.append(m)
-            return "\n".join(msgs)
-        case httpx.HTTPStatusError():
-            data = err.response.json()
-            if isinstance(data, dict) and "detail" in data:
-                return clean_error_msg(str(data["detail"]))
-            return clean_error_msg(str(err))
-        case ValueError():
-            msg = str(err)
-            if "invalid literal for int()" in msg:
-                return f"Invalid line number or range in locate string: {msg.split(': ')[-1]}"
-            return msg
-        case OSError() as e:
-            if e.strerror and e.filename:
-                return f"{e.strerror}: {e.filename}"
-            return clean_error_msg(str(e))
-        case _:
-            return str(err)

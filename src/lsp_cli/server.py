@@ -3,16 +3,16 @@ from typing import Annotated
 
 import typer
 
-from lsp_cli.manager import (
+from lsp_cli.manager.manager import connect_manager
+from lsp_cli.manager.models import (
     CreateClientRequest,
     CreateClientResponse,
     DeleteClientRequest,
     DeleteClientResponse,
     ManagedClientInfo,
     ManagedClientInfoList,
-    connect_manager,
 )
-from lsp_cli.utils.http import HttpClient
+from lsp_cli.utils.sync import cli_syncify
 
 app = typer.Typer(
     name="server",
@@ -42,74 +42,60 @@ def callback(ctx: typer.Context) -> None:
         list_servers()
 
 
-def get_manager_client() -> HttpClient:
-    return connect_manager()
-
-
 @app.command("list")
-def list_servers() -> None:
+@cli_syncify
+async def list_servers() -> None:
     """List all currently running and managed LSP servers."""
-    with get_manager_client() as client:
-        resp = client.get("/list", ManagedClientInfoList)
-        servers = resp.root if resp else []
-        if not servers:
+    async with connect_manager() as client:
+        resp = await client.get("/list", ManagedClientInfoList)
+        if servers := resp.root if resp else []:
+            print(ManagedClientInfo.format(servers))
+        else:
             print("No servers running.")
-            return
-        print(ManagedClientInfo.format(servers))
 
 
 @app.command("start")
-def start_server(
+@cli_syncify
+async def start_server(
     path: Path = typer.Argument(
-        None,
         help="Path to a code file or project directory to start the LSP server for.",
     ),
     project: ProjectOpt = None,
 ) -> None:
     """Start a background LSP server for the project containing the specified path."""
-    if path is None:
-        path = Path.cwd()
 
-    if not path.is_absolute():
-        path = path.absolute()
-
-    with get_manager_client() as client:
-        resp = client.post(
+    async with connect_manager() as client:
+        resp = await client.post(
             "/create",
             CreateClientResponse,
-            json=CreateClientRequest(path=path, project_path=project),
+            json=CreateClientRequest(path=path.absolute(), project_path=project),
         )
         assert resp is not None
         info = resp.info
         print(f"Success: Started server for {path}")
-        print(ManagedClientInfo.format(info))
+        print(ManagedClientInfo.format([info]))
 
 
 @app.command("stop")
-def stop_server(
+@cli_syncify
+async def stop_server(
     path: Path = typer.Argument(
-        None,
         help="Path to a code file or project directory to stop the LSP server for.",
     ),
     project: ProjectOpt = None,
 ) -> None:
     """Stop the background LSP server for the project containing the specified path."""
-    if path is None:
-        path = Path.cwd()
 
-    if not path.is_absolute():
-        path = path.absolute()
-
-    with get_manager_client() as client:
-        resp = client.delete(
+    async with connect_manager() as client:
+        resp = await client.delete(
             "/delete",
             DeleteClientResponse,
-            json=DeleteClientRequest(path=path, project_path=project),
+            json=DeleteClientRequest(path=path.absolute(), project_path=project),
         )
-        if resp and resp.info:
-            print(f"Success: Stopped server for {path}")
+        if resp.info:
+            print(f"Success: Stopped server for {resp.info.project_path}")
         else:
-            print(f"Warning: No server running for {path}")
+            print(f"Warning: No server running for {project}")
 
 
 if __name__ == "__main__":

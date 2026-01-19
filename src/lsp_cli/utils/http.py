@@ -6,94 +6,6 @@ from pydantic import BaseModel
 
 
 @define
-class HttpClient:
-    client: httpx.Client = field(factory=httpx.Client)
-
-    def request[T: BaseModel](
-        self,
-        method: str,
-        url: str,
-        resp_schema: type[T],
-        *,
-        params: BaseModel | None = None,
-        json: BaseModel | None = None,
-    ) -> T | None:
-        resp = self.client.request(
-            method,
-            url,
-            params=params.model_dump(exclude_none=True, mode="json")
-            if params
-            else None,
-            json=json.model_dump(exclude_none=True, mode="json") if json else None,
-        )
-        resp.raise_for_status()
-        if resp.status_code == 204 or not resp.content:
-            return None
-        json_data = resp.json()
-        if json_data is None:
-            return None
-        return resp_schema.model_validate(json_data)
-
-    def get[T: BaseModel](
-        self,
-        url: str,
-        resp_schema: type[T],
-        *,
-        params: BaseModel | None = None,
-    ) -> T | None:
-        return self.request("GET", url, resp_schema, params=params)
-
-    def post[T: BaseModel](
-        self,
-        url: str,
-        resp_schema: type[T],
-        *,
-        params: BaseModel | None = None,
-        json: BaseModel | None = None,
-    ) -> T | None:
-        return self.request("POST", url, resp_schema, params=params, json=json)
-
-    def put[T: BaseModel](
-        self,
-        url: str,
-        resp_schema: type[T],
-        *,
-        params: BaseModel | None = None,
-        json: BaseModel | None = None,
-    ) -> T | None:
-        return self.request("PUT", url, resp_schema, params=params, json=json)
-
-    def patch[T: BaseModel](
-        self,
-        url: str,
-        resp_schema: type[T],
-        *,
-        params: BaseModel | None = None,
-        json: BaseModel | None = None,
-    ) -> T | None:
-        return self.request("PATCH", url, resp_schema, params=params, json=json)
-
-    def delete[T: BaseModel](
-        self,
-        url: str,
-        resp_schema: type[T],
-        *,
-        params: BaseModel | None = None,
-        json: BaseModel | None = None,
-    ) -> T | None:
-        return self.request("DELETE", url, resp_schema, params=params, json=json)
-
-    def close(self) -> None:
-        self.client.close()
-
-    def __enter__(self) -> HttpClient:
-        return self
-
-    def __exit__(self, *args: object) -> None:
-        self.close()
-
-
-@define
 class AsyncHttpClient:
     client: httpx.AsyncClient = field(factory=httpx.AsyncClient)
 
@@ -105,7 +17,7 @@ class AsyncHttpClient:
         *,
         params: BaseModel | None = None,
         json: BaseModel | None = None,
-    ) -> T | None:
+    ) -> T:
         resp = await self.client.request(
             method,
             url,
@@ -115,12 +27,7 @@ class AsyncHttpClient:
             json=json.model_dump(exclude_none=True, mode="json") if json else None,
         )
         resp.raise_for_status()
-        if resp.status_code == 204 or not resp.content:
-            return None
-        json_data = resp.json()
-        if json_data is None:
-            return None
-        return resp_schema.model_validate(json_data)
+        return resp_schema.model_validate(resp.json())
 
     async def get[T: BaseModel](
         self,
@@ -128,7 +35,7 @@ class AsyncHttpClient:
         resp_schema: type[T],
         *,
         params: BaseModel | None = None,
-    ) -> T | None:
+    ) -> T:
         return await self.request("GET", url, resp_schema, params=params)
 
     async def post[T: BaseModel](
@@ -138,7 +45,7 @@ class AsyncHttpClient:
         *,
         params: BaseModel | None = None,
         json: BaseModel | None = None,
-    ) -> T | None:
+    ) -> T:
         return await self.request("POST", url, resp_schema, params=params, json=json)
 
     async def put[T: BaseModel](
@@ -148,7 +55,7 @@ class AsyncHttpClient:
         *,
         params: BaseModel | None = None,
         json: BaseModel | None = None,
-    ) -> T | None:
+    ) -> T:
         return await self.request("PUT", url, resp_schema, params=params, json=json)
 
     async def patch[T: BaseModel](
@@ -158,7 +65,7 @@ class AsyncHttpClient:
         *,
         params: BaseModel | None = None,
         json: BaseModel | None = None,
-    ) -> T | None:
+    ) -> T:
         return await self.request("PATCH", url, resp_schema, params=params, json=json)
 
     async def delete[T: BaseModel](
@@ -168,7 +75,7 @@ class AsyncHttpClient:
         *,
         params: BaseModel | None = None,
         json: BaseModel | None = None,
-    ) -> T | None:
+    ) -> T:
         return await self.request("DELETE", url, resp_schema, params=params, json=json)
 
     async def close(self) -> None:
